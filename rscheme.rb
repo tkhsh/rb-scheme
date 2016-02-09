@@ -131,10 +131,13 @@ module RScheme
       result
     end
 
+    def negative_number_p?
+      Proc.new {|c| '-' == c && /\d/ === peek}
+    end
+
     def read_expr
       loop do
         c = getc
-
         case c
         when /\s/
           next
@@ -153,8 +156,8 @@ module RScheme
         #   return read_quote
         when /\d/
           return make_int(read_number(c.to_i))
-        # when '-' && peek.digit?
-        #   return make_int
+        when negative_number_p?
+          return make_int(-read_number(c.to_i))
         # when symbol?
         #   return read_symbol
         else
