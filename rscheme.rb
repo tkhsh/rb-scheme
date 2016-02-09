@@ -67,8 +67,10 @@ module RScheme
       LCell.new(car, cdr)
     end
 
-    def make_int(digit)
-      LInt.new(digit.to_i)
+    def make_int(value)
+      LInt.new(value)
+    end
+
     end
   end # LispObject
 
@@ -150,7 +152,7 @@ module RScheme
         # when '\''
         #   return read_quote
         when /\d/
-          return read_number(c.to_i)
+          return make_int(read_number(c.to_i))
         # when '-' && peek.digit?
         #   return make_int
         # when symbol?
