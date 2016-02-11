@@ -1,6 +1,7 @@
 module RScheme
 
   module LispObject
+    @@symbols = {}
 
     module Type
       INT = 1
@@ -37,7 +38,11 @@ module RScheme
     end
 
     class LSymbol
-      attr_accessor :sym
+      attr_accessor :name
+
+      def initialize(name)
+        @name = name
+      end
 
       def type
         Type::SYMBOL
@@ -60,6 +65,14 @@ module RScheme
       def self.type
         Type::NIL
       end
+    end
+
+    def intern(name)
+      return @@symbols[name] if @@symbols.has_key?(name)
+
+      sym = LSymbol.new(name)
+      @@symbols[name] = sym
+      sym
     end
 
     # Constructor
@@ -100,7 +113,6 @@ module RScheme
         acc = cons(cdr.car, acc)
         cdr = cdr.cdr
       end
-
       acc
     end
 
@@ -130,8 +142,21 @@ module RScheme
       result
     end
 
+    def read_symbol(first_char)
+      result = first_char
+      while symbol_rp === peek
+        result += getc
+      end
+      intern(result.to_sym)
+    end
+
     def negative_number_pred
       Proc.new {|c| '-' == c && /\d/ === peek}
+    end
+
+    def symbol_rp
+      allowed = '~!@$%^&*-_=+:/?<>'
+      Regexp.new("[A-Za-z#{Regexp.escape(allowed)}]")
     end
 
     def read_expr
@@ -157,8 +182,8 @@ module RScheme
           return make_int(read_number(c.to_i))
         when negative_number_pred
           return make_int(-read_number(c.to_i))
-        # when symbol?
-        #   return read_symbol
+        when symbol_rp
+          return read_symbol(c)
         else
           raise "error - read_expr"
         end
