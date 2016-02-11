@@ -71,7 +71,6 @@ module RScheme
       LInt.new(value)
     end
 
-    end
   end # LispObject
 
 
