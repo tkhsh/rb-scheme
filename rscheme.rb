@@ -109,7 +109,7 @@ module RScheme
       acc = LNIL
       loop do
         obj = read_expr
-        raise "error - read_list" if obj.nil?
+        raise "read_list: Unclosed parenthesis" if obj.nil?
 
         case obj.type
         when Type::CLOSEPAREN
