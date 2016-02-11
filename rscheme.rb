@@ -185,7 +185,7 @@ module RScheme
         case c
         when /\s/
           next
-        when nil #EOF
+        when EOF
           return nil
         when ';'
           skip_line
