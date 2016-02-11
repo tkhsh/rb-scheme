@@ -90,6 +90,8 @@ module RScheme
   class Parser
     include LispObject
 
+    EOF = nil
+
     def initialize(input)
       @input = input
     end
@@ -114,6 +116,19 @@ module RScheme
         cdr = cdr.cdr
       end
       acc
+    end
+
+    def skip_line
+      loop do
+        c = getc
+        case c
+        when EOF, '\n'
+          return
+        when '\r'
+          getc if '\n' == peek
+          return
+        end
+      end
     end
 
     def read_list
@@ -172,9 +187,9 @@ module RScheme
           next
         when nil #EOF
           return nil
-        # when ';'
-        #   skip_line
-        #   next
+        when ';'
+          skip_line
+          next
         when '('
           return read_list
         when ')'
