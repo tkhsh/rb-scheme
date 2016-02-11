@@ -134,6 +134,11 @@ module RScheme
       end
     end
 
+    def read_quote
+      sym = intern(:quote)
+      cons(sym, read_expr)
+    end
+
     def read_number(value)
       result = value
       while /\d/ === peek
@@ -176,8 +181,8 @@ module RScheme
           return LCloseParen
         when '.'
           return LDot
-        # when '\''
-        #   return read_quote
+        when '\''
+          return read_quote
         when /\d/
           return make_int(read_number(c.to_i))
         when negative_number_pred
