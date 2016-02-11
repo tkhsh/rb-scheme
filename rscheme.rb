@@ -131,7 +131,7 @@ module RScheme
       result
     end
 
-    def negative_number_p?
+    def negative_number_pred
       Proc.new {|c| '-' == c && /\d/ === peek}
     end
 
@@ -156,7 +156,7 @@ module RScheme
         #   return read_quote
         when /\d/
           return make_int(read_number(c.to_i))
-        when negative_number_p?
+        when negative_number_pred
           return make_int(-read_number(c.to_i))
         # when symbol?
         #   return read_symbol
