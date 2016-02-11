@@ -141,8 +141,21 @@ module RScheme
         when Type::CLOSEPAREN
           return reverse_list(acc)
         when Type::DOT
-          # todo
-          raise "error - no dot support"
+          last = read_expr
+          close = read_expr
+          if close.nil? || close.type != Type::CLOSEPAREN
+            raise "read_list: Unclosed parenthesis"
+          end
+          if acc.type == Type::NIL
+            raise "read_list: dotted list must have car"
+          end
+          result = cons(acc.car, last)
+          cdr = acc.cdr
+          until cdr.type == Type::NIL
+            result = cons(cdr.car, result)
+            cdr = cdr.cdr
+          end
+          return result
         else
           acc = cons(obj, acc)
         end
