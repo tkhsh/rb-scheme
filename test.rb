@@ -21,5 +21,17 @@ class TestParser < Minitest::Test
       assert_equal 10, expr3.value
       assert_equal Type::INT, expr3.type
     end
+
+    # symbol
+    StringIO.open("a bc") do |strio|
+      parser = Parser.new(strio)
+
+      expr1 = parser.read_expr
+      assert_equal :a, expr1.name
+      assert_equal Type::SYMBOL, expr1.type
+      expr2 = parser.read_expr
+      assert_equal :bc, expr2.name
+      assert_equal Type::SYMBOL, expr2.type
+    end
   end
 end
