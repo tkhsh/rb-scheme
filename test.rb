@@ -33,5 +33,17 @@ class TestParser < Minitest::Test
       assert_equal :bc, expr2.name
       assert_equal Type::SYMBOL, expr2.type
     end
+
+    # quote
+    StringIO.open("'a '(a b c)") do |strio|
+      parser = Parser.new(strio)
+
+      expr1 = parser.read_expr
+      assert_equal :quote, expr1.car.name
+      assert_equal Type::CELL, expr1.type
+      expr2 = parser.read_expr
+      assert_equal :quote, expr2.car.name
+      assert_equal Type::CELL, expr2.type
+    end
   end
 end
