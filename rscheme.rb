@@ -10,6 +10,9 @@ module RScheme
       DOT = 4
       CLOSEPAREN = 5
       NIL = 6
+      TRUE = 7
+      PRIMITIVE = 8
+      FUNCTION = 9
     end
 
     class LInt
