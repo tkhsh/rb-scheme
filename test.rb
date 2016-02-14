@@ -61,5 +61,18 @@ class TestParser < Minitest::Test
       expr3 = parser.read_expr
       assert_equal Type::NIL, expr3.type
     end
+
+    # dotted list
+    StringIO.open("(1 . 2) (f 1 . 3)") do |strio|
+      parser = Parser.new(strio)
+
+      expr1 = parser.read_expr
+      assert_equal 1, expr1.car.value
+      assert_equal 2, expr1.cdr.value
+      expr2 = parser.read_expr
+      assert_equal :f, expr2.car.name
+      assert_equal 1, expr2.cdr.car.value
+      assert_equal 3, expr2.cdr.cdr.value
+    end
   end
 end
