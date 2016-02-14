@@ -254,4 +254,4 @@ module RScheme
   end # Executer
 end
 
-RScheme::Executer.run
+# RScheme::Executer.run
