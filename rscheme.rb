@@ -227,7 +227,7 @@ module RScheme
   class Evaluator
     include LispObject
 
-    def self.eval(obj, env)
+    def eval(obj, env)
       case obj.type
       when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
            Type::TRUE, Type::NIL
