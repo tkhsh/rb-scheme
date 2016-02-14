@@ -224,6 +224,25 @@ module RScheme
 
   end # Parser
 
+  class Evaluator
+    include LispObject
+
+    def self.eval(obj, env)
+      case obj.type
+      when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
+           Type::TRUE, Type::NIL
+        obj
+      when Type::SYMBOL
+        raise NotImplementedError, "Symbol"
+      when Type::CELL
+        raise NotImplementedError, "Cell"
+      else
+        raise "Unexpected type - #{obj.type}"
+      end
+    end
+
+  end # Evaluator
+
   class Executer
     def self.run
       new.exec
