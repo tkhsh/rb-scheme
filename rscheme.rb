@@ -217,7 +217,7 @@ module RScheme
         when symbol_rp
           return read_symbol(c)
         else
-          raise "error - read_expr"
+          raise "Unexpected character - #{c}"
         end
       end
     end
