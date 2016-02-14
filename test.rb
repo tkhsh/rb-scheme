@@ -45,5 +45,21 @@ class TestParser < Minitest::Test
       assert_equal :quote, expr2.car.name
       assert_equal Type::CELL, expr2.type
     end
+
+    # list
+    StringIO.open("(1 2 3) (a) ()") do |strio|
+      parser = Parser.new(strio)
+
+      expr1 = parser.read_expr
+      assert_equal 1, expr1.car.value
+      assert_equal 2, expr1.cdr.car.value
+      assert_equal 3, expr1.cdr.cdr.car.value
+      assert_equal Type::NIL, expr1.cdr.cdr.cdr.type
+      expr2 = parser.read_expr
+      assert_equal :a, expr2.car.name
+      assert_equal Type::NIL, expr2.cdr.type
+      expr3 = parser.read_expr
+      assert_equal Type::NIL, expr3.type
+    end
   end
 end
