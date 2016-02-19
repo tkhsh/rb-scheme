@@ -117,14 +117,7 @@ module RScheme
 
     def reverse_list(list)
       return LNIL if list.type == Type::NIL
-
-      acc = cons(list.car, LNIL)
-      cdr = list.cdr
-      until cdr.type == Type::NIL
-        acc = cons(cdr.car, acc)
-        cdr = cdr.cdr
-      end
-      acc
+      list.reduce(LNIL) { |res, e| cons(e, res) }
     end
 
     def skip_line
@@ -158,13 +151,8 @@ module RScheme
           if acc.type == Type::NIL
             raise "read_list: dotted list must have car"
           end
-          result = cons(acc.car, last)
-          cdr = acc.cdr
-          until cdr.type == Type::NIL
-            result = cons(cdr.car, result)
-            cdr = cdr.cdr
-          end
-          return result
+
+          return acc.reduce(last) { |res, e| cons(e, res) }
         else
           acc = cons(obj, acc)
         end
