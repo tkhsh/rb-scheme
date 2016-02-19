@@ -28,6 +28,8 @@ module RScheme
     end
 
     class LCell
+      include Enumerable
+
       attr_accessor :car, :cdr
 
       def initialize(car = nil, cdr = nil)
@@ -37,6 +39,14 @@ module RScheme
 
       def type
         Type::CELL
+      end
+
+      def each
+        list = self
+        until list.type == Type::NIL
+          yield(list.car)
+          list = list.cdr
+        end
       end
     end
 
