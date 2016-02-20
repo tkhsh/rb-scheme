@@ -93,6 +93,10 @@ module RScheme
       LCell.new(car, cdr)
     end
 
+    def acons(key, val, cdr)
+      cons(cons(key, val), cdr)
+    end
+
   end # LispObject
 
 
