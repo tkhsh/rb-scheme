@@ -134,6 +134,29 @@ module RScheme
       raise "Unbound variable - #{var.name}"
     end
 
+    def syntax_if
+      lambda do |form, env|
+        raise "Malformed if" if form.count < 2
+
+        cond = eval(form.car, env)
+        if cond.type != Type::NIL
+          eval(form.cdar, env)
+        else
+          eval(form.cddar, env)
+        end
+      end
+    end
+
+    def add_primitive!(env)
+      add_syntax!(env, :if, syntax_if)
+      # add_subrutine!(env, :+, subr_plus)
+      # todo ...
+    end
+
+    def add_syntax!(env, name, p)
+      env.car = acons(intern(name), LSyntax.new(name, p), env.car)
+    end
+
   end # LispObject
 
 
