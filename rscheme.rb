@@ -13,6 +13,7 @@ module RScheme
       TRUE = 7
       PRIMITIVE = 8
       FUNCTION = 9
+      SYNTAX = 10
     end
 
     class LInt
@@ -85,6 +86,19 @@ module RScheme
     class LNIL
       def self.type
         Type::NIL
+      end
+    end
+
+    class LSyntax
+      attr_accessor :name, :syntax
+
+      def initialize(name, syntax)
+        @name = name
+        @syntax = syntax
+      end
+
+      def type
+        Type::SYNTAX
       end
     end
 
