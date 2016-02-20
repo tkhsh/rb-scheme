@@ -161,14 +161,29 @@ module RScheme
       end
     end
 
+    def subr_plus
+      lambda do |args, env|
+        args.reduce(0) do |sum, a|
+          obj = eval(env, a)
+          raise "+ supports only numbers" if obj.type != Type::INT
+
+          sum + obj.value
+        end
+      end
+    end
+
     def add_primitive!(env)
       add_syntax!(env, :if, syntax_if)
-      # add_subrutine!(env, :+, subr_plus)
+      add_subrutine!(env, :+, subr_plus)
       # todo ...
     end
 
     def add_syntax!(env, name, p)
       env.car = acons(intern(name), LSyntax.new(name, p), env.car)
+    end
+
+    def add_subrutine!(env, name, p)
+      env.car = acons(intern(name), LSubroutine.new(name, p), env.car)
     end
 
   end # LispObject
