@@ -102,6 +102,16 @@ module RScheme
       cons(nil, nil)
     end
 
+    def lookup_variable(var, env)
+      env.each do |frame|
+        frame.each do |bind|
+          return bind.cdr if var.name == bind.car.name
+        end
+      end
+
+      raise "Unbound variable - #{var.name}"
+    end
+
   end # LispObject
 
 
@@ -240,7 +250,7 @@ module RScheme
            Type::TRUE, Type::NIL
         obj
       when Type::SYMBOL
-        raise NotImplementedError, "Symbol"
+        lookup_variable(obj, env)
       when Type::CELL
         raise NotImplementedError, "Cell"
       else
