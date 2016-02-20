@@ -97,6 +97,11 @@ module RScheme
       cons(cons(key, val), cdr)
     end
 
+    # Environment
+    def init_env
+      cons(nil, nil)
+    end
+
   end # LispObject
 
 
