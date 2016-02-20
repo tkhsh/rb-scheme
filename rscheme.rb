@@ -14,6 +14,7 @@ module RScheme
       PRIMITIVE = 8
       FUNCTION = 9
       SYNTAX = 10
+      SUBROUTINE = 11
     end
 
     class LInt
@@ -99,6 +100,19 @@ module RScheme
 
       def type
         Type::SYNTAX
+      end
+    end
+
+    class LSubroutine
+      attr_accessor :name, :subr
+
+      def initialize(name, subr)
+        @name = name
+        @subr = subr
+      end
+
+      def type
+        Type::SUBROUTINE
       end
     end
 
