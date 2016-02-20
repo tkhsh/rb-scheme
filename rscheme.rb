@@ -48,6 +48,14 @@ module RScheme
           list = list.cdr
         end
       end
+
+      def cdar
+        @cdr.car
+      end
+
+      def cddar
+        @cdr.cdr.car
+      end
     end
 
     class LSymbol
