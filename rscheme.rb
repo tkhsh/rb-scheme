@@ -142,11 +142,6 @@ module RScheme
       cons(cons(key, val), cdr)
     end
 
-    # Environment
-    def init_env
-      cons(nil, nil)
-    end
-
     def lookup_variable(var, env)
       env.each do |frame|
         frame.each do |bind|
@@ -155,45 +150,6 @@ module RScheme
       end
 
       raise "Unbound variable - #{var.name}"
-    end
-
-    def syntax_if
-      lambda do |form, env|
-        raise "Malformed if" if form.count < 2
-
-        cond = eval(form.car, env)
-        if cond.type != Type::NIL
-          eval(form.cdar, env)
-        else
-          eval(form.cddar, env)
-        end
-      end
-    end
-
-    def subr_plus
-      lambda do |args, env|
-        val = args.reduce(0) do |sum, a|
-                obj = eval(a, env)
-                raise "+ supports only numbers" if obj.type != Type::INT
-
-                sum + obj.value
-              end
-        LInt.new(val)
-      end
-    end
-
-    def add_primitive!(env)
-      add_syntax!(env, :if, syntax_if)
-      add_subrutine!(env, :+, subr_plus)
-      # todo ...
-    end
-
-    def add_syntax!(env, name, p)
-      env.car = acons(intern(name), LSyntax.new(name, p), env.car)
-    end
-
-    def add_subrutine!(env, name, p)
-      env.car = acons(intern(name), LSubroutine.new(name, p), env.car)
     end
 
     def map_eval(list, env)
@@ -356,6 +312,50 @@ module RScheme
 
   class Executer
     include LispObject
+
+    # Environment
+    def init_env
+      cons(nil, nil)
+    end
+
+    def syntax_if
+      lambda do |form, env|
+        raise "Malformed if" if form.count < 2
+
+        cond = eval(form.car, env)
+        if cond.type != Type::NIL
+          eval(form.cdar, env)
+        else
+          eval(form.cddar, env)
+        end
+      end
+    end
+
+    def subr_plus
+      lambda do |args, env|
+        val = args.reduce(0) do |sum, a|
+                obj = eval(a, env)
+                raise "+ supports only numbers" if obj.type != Type::INT
+
+                sum + obj.value
+              end
+        LInt.new(val)
+      end
+    end
+
+    def add_primitive!(env)
+      add_syntax!(env, :if, syntax_if)
+      add_subrutine!(env, :+, subr_plus)
+      # todo ...
+    end
+
+    def add_syntax!(env, name, p)
+      env.car = acons(intern(name), LSyntax.new(name, p), env.car)
+    end
+
+    def add_subrutine!(env, name, p)
+      env.car = acons(intern(name), LSubroutine.new(name, p), env.car)
+    end
 
     def self.run
       new.exec
