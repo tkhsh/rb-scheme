@@ -122,16 +122,6 @@ module RScheme
   end
 
   module LispObject
-
-    # Constructor
-    def cons(car, cdr)
-      LCell.new(car, cdr)
-    end
-
-    def acons(key, val, cdr)
-      cons(cons(key, val), cdr)
-    end
-
     def lookup_variable(var, env)
       env.each do |frame|
         frame.each do |bind|
@@ -186,8 +176,19 @@ module RScheme
 
   end
 
+  module Helpers
+    # Constructor
+    def cons(car, cdr)
+      LCell.new(car, cdr)
+    end
+
+    def acons(key, val, cdr)
+      cons(cons(key, val), cdr)
+    end
+  end
+
   class Parser
-    include LispObject
+    include Helpers
     include Symbol
 
     EOF = nil
@@ -315,6 +316,7 @@ module RScheme
 
   class Executer
     include LispObject
+    include Helpers
     include Symbol
 
     # Environment
