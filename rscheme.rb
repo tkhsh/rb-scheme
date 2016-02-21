@@ -195,6 +195,30 @@ module RScheme
       env.car = acons(intern(name), LSubroutine.new(name, p), env.car)
     end
 
+    def eval(obj, env)
+      case obj.type
+      when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
+           Type::TRUE, Type::NIL
+        obj
+      when Type::SYMBOL
+        lookup_variable(obj, env)
+      when Type::CELL
+        raise "Invalid application" unless obj.list?
+
+        fst = eval(obj.car, env)
+        case fst.type
+        when Type::SYNTAX
+          fst.syntax(obj.cdr, env)
+        when Type::SUBROUTINE
+          raise NotImplementedError, "subroutine"
+        else
+          raise "application - unexpected type #{fst.type}"
+        end
+      else
+        raise "Unexpected type - #{obj.type}"
+      end
+    end
+
   end # LispObject
 
 
@@ -326,30 +350,6 @@ module RScheme
 
   class Evaluator
     include LispObject
-
-    def eval(obj, env)
-      case obj.type
-      when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
-           Type::TRUE, Type::NIL
-        obj
-      when Type::SYMBOL
-        lookup_variable(obj, env)
-      when Type::CELL
-        raise "Invalid application" unless obj.list?
-
-        fst = eval(obj.car, env)
-        case fst.type
-        when Type::SYNTAX
-          fst.syntax(obj.cdr, env)
-        when Type::SUBROUTINE
-          raise NotImplementedError, "subroutine"
-        else
-          raise "application - unexpected type #{fst.type}"
-        end
-      else
-        raise "Unexpected type - #{obj.type}"
-      end
-    end
 
   end # Evaluator
 
