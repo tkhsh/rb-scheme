@@ -325,6 +325,7 @@ module RScheme
     include Evaluator
     include Helpers
     include Symbol
+    include Printer
 
     # Environment
     def init_env
@@ -375,7 +376,15 @@ module RScheme
     end
 
     def exec
-      expr = Parser.new(STDIN).read_expr
+      parser = Parser.new(STDIN)
+      env = init_env
+      add_primitive!(env)
+
+      loop do
+        expr = parser.read_expr
+        return if expr.nil?
+        print(eval(expr, env))
+      end
     end
   end # Executer
 end
