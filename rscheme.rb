@@ -1,128 +1,127 @@
 module RScheme
+  module Type
+    INT = 1
+    CELL = 2
+    SYMBOL = 3
+    DOT = 4
+    CLOSEPAREN = 5
+    NIL = 6
+    TRUE = 7
+    PRIMITIVE = 8
+    FUNCTION = 9
+    SYNTAX = 10
+    SUBROUTINE = 11
+  end
+
+  class LInt
+    attr_accessor :value
+
+    def initialize(value)
+      @value = value
+    end
+
+    def type
+      Type::INT
+    end
+  end
+
+  class LCell
+    include Enumerable
+
+    attr_accessor :car, :cdr
+
+    def initialize(car = nil, cdr = nil)
+      @car = car
+      @cdr = cdr
+    end
+
+    def type
+      Type::CELL
+    end
+
+    def each
+      list = self
+      until list.type == Type::NIL
+        yield(list.car)
+        list = list.cdr
+      end
+    end
+
+    def cdar
+      @cdr.car
+    end
+
+    def cddar
+      @cdr.cdr.car
+    end
+
+    def list?
+      cdr = @cdr
+      loop do
+        return true if cdr.type == Type::NIL
+        return false if cdr.type != Type::CELL
+        cdr = cdr.cdr
+      end
+    end
+  end
+
+  class LSymbol
+    attr_accessor :name
+
+    def initialize(name)
+      @name = name
+    end
+
+    def type
+      Type::SYMBOL
+    end
+  end
+
+  class LDot
+    def self.type
+      Type::DOT
+    end
+  end
+
+  class LCloseParen
+    def self.type
+      Type::CLOSEPAREN
+    end
+  end
+
+  class LNIL
+    def self.type
+      Type::NIL
+    end
+  end
+
+  class LSyntax
+    attr_accessor :name, :syntax
+
+    def initialize(name, syntax)
+      @name = name
+      @syntax = syntax
+    end
+
+    def type
+      Type::SYNTAX
+    end
+  end
+
+  class LSubroutine
+    attr_accessor :name, :subr
+
+    def initialize(name, subr)
+      @name = name
+      @subr = subr
+    end
+
+    def type
+      Type::SUBROUTINE
+    end
+  end
 
   module LispObject
-
-    module Type
-      INT = 1
-      CELL = 2
-      SYMBOL = 3
-      DOT = 4
-      CLOSEPAREN = 5
-      NIL = 6
-      TRUE = 7
-      PRIMITIVE = 8
-      FUNCTION = 9
-      SYNTAX = 10
-      SUBROUTINE = 11
-    end
-
-    class LInt
-      attr_accessor :value
-
-      def initialize(value)
-        @value = value
-      end
-
-      def type
-        Type::INT
-      end
-    end
-
-    class LCell
-      include Enumerable
-
-      attr_accessor :car, :cdr
-
-      def initialize(car = nil, cdr = nil)
-        @car = car
-        @cdr = cdr
-      end
-
-      def type
-        Type::CELL
-      end
-
-      def each
-        list = self
-        until list.type == Type::NIL
-          yield(list.car)
-          list = list.cdr
-        end
-      end
-
-      def cdar
-        @cdr.car
-      end
-
-      def cddar
-        @cdr.cdr.car
-      end
-
-      def list?
-        cdr = @cdr
-        loop do
-          return true if cdr.type == Type::NIL
-          return false if cdr.type != Type::CELL
-          cdr = cdr.cdr
-        end
-      end
-    end
-
-    class LSymbol
-      attr_accessor :name
-
-      def initialize(name)
-        @name = name
-      end
-
-      def type
-        Type::SYMBOL
-      end
-    end
-
-    class LDot
-      def self.type
-        Type::DOT
-      end
-    end
-
-    class LCloseParen
-      def self.type
-        Type::CLOSEPAREN
-      end
-    end
-
-    class LNIL
-      def self.type
-        Type::NIL
-      end
-    end
-
-    class LSyntax
-      attr_accessor :name, :syntax
-
-      def initialize(name, syntax)
-        @name = name
-        @syntax = syntax
-      end
-
-      def type
-        Type::SYNTAX
-      end
-    end
-
-    class LSubroutine
-      attr_accessor :name, :subr
-
-      def initialize(name, subr)
-        @name = name
-        @subr = subr
-      end
-
-      def type
-        Type::SUBROUTINE
-      end
-    end
 
     # Constructor
     def cons(car, cdr)
