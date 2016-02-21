@@ -121,7 +121,7 @@ module RScheme
     end
   end
 
-  module LispObject
+  module Evaluator
     def lookup_variable(var, env)
       env.each do |frame|
         frame.each do |bind|
@@ -161,7 +161,7 @@ module RScheme
       end
     end
 
-  end # LispObject
+  end # Evaluator
 
   module Symbol
     @@symbols = {}
@@ -315,7 +315,7 @@ module RScheme
   end # Parser
 
   class Executer
-    include LispObject
+    include Evaluator
     include Helpers
     include Symbol
 
