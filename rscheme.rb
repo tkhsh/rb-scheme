@@ -314,6 +314,13 @@ module RScheme
 
   end # Parser
 
+  require "yaml"
+  module Printer
+    def print(obj)
+      puts YAML.dump(obj)
+    end
+  end # Printer
+
   class Executer
     include Evaluator
     include Helpers
