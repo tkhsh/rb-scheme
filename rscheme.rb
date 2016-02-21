@@ -277,6 +277,18 @@ module RScheme
       result
     end
 
+    def read_hash
+      c = getc
+      case c
+      when 't'
+        LTrue
+      when 'f'
+        LFalse
+      else
+        raise "Unexpected hash literal #{c}"
+      end
+    end
+
     def read_symbol(first_char)
       result = first_char
       while symbol_rp === peek
@@ -317,6 +329,8 @@ module RScheme
           return LInt.new(read_number(c.to_i))
         when negative_number_pred
           return LInt.new(-read_number(c.to_i))
+        when '#'
+          return read_hash
         when symbol_rp
           return read_symbol(c)
         else
