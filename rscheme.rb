@@ -1,7 +1,6 @@
 module RScheme
 
   module LispObject
-    @@symbols = {}
 
     module Type
       INT = 1
@@ -125,14 +124,6 @@ module RScheme
       end
     end
 
-    def intern(name)
-      return @@symbols[name] if @@symbols.has_key?(name)
-
-      sym = LSymbol.new(name)
-      @@symbols[name] = sym
-      sym
-    end
-
     # Constructor
     def cons(car, cdr)
       LCell.new(car, cdr)
@@ -183,9 +174,22 @@ module RScheme
 
   end # LispObject
 
+  module Symbol
+    @@symbols = {}
+
+    def intern(name)
+      return @@symbols[name] if @@symbols.has_key?(name)
+
+      sym = LSymbol.new(name)
+      @@symbols[name] = sym
+      sym
+    end
+
+  end
 
   class Parser
     include LispObject
+    include Symbol
 
     EOF = nil
 
@@ -312,6 +316,7 @@ module RScheme
 
   class Executer
     include LispObject
+    include Symbol
 
     # Environment
     def init_env
