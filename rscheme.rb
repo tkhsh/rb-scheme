@@ -348,12 +348,9 @@ module RScheme
 
   end # Parser
 
-  class Evaluator
+  class Executer
     include LispObject
 
-  end # Evaluator
-
-  class Executer
     def self.run
       new.exec
     end
