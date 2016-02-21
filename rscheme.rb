@@ -364,7 +364,7 @@ module RScheme
         raise "Malformed if" if form.count < 2
 
         cond = eval(form.car, env)
-        if cond.type != Type::NIL
+        if cond.type != Type::FALSE
           eval(form.cdar, env)
         else
           eval(form.cddar, env)
