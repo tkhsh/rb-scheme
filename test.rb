@@ -4,7 +4,6 @@ require './rscheme'
 
 class TestParser < Minitest::Test
   include RScheme
-  include RScheme::LispObject
 
   def test_read_expr
     # integer
