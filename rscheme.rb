@@ -196,6 +196,10 @@ module RScheme
       env.car = acons(intern(name), LSubroutine.new(name, p), env.car)
     end
 
+    def map_eval(list, env)
+      list.map { |e| eval(e, env) }
+    end
+
     def eval(obj, env)
       case obj.type
       when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
@@ -211,7 +215,8 @@ module RScheme
         when Type::SYNTAX
           fst.syntax(obj.cdr, env)
         when Type::SUBROUTINE
-          raise NotImplementedError, "subroutine"
+          args = map_eval(obj.cdr, env)
+          fst.subr.call(args, env)
         else
           raise "application - unexpected type #{fst.type}"
         end
