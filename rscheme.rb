@@ -58,6 +58,15 @@ module RScheme
       def cddar
         @cdr.cdr.car
       end
+
+      def list?
+        cdr = @cdr
+        loop do
+          return true if cdr.type == Type::NIL
+          return false if cdr.type != Type::CELL
+          cdr = cdr.cdr
+        end
+      end
     end
 
     class LSymbol
@@ -326,7 +335,17 @@ module RScheme
       when Type::SYMBOL
         lookup_variable(obj, env)
       when Type::CELL
-        raise NotImplementedError, "Cell"
+        raise "Invalid application" unless obj.list?
+
+        fst = eval(obj.car, env)
+        case fst.type
+        when Type::SYNTAX
+          fst.syntax(obj.cdr, env)
+        when Type::SUBROUTINE
+          raise NotImplementedError, "subroutine"
+        else
+          raise "application - unexpected type #{fst.type}"
+        end
       else
         raise "Unexpected type - #{obj.type}"
       end
