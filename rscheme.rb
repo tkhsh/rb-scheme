@@ -96,6 +96,18 @@ module RScheme
     end
   end
 
+  class LTrue
+    def self.type
+      Type::TRUE
+    end
+  end
+
+  class LFalse
+    def self.type
+      Type::FALSE
+    end
+  end
+
   class LSyntax
     attr_accessor :name, :syntax
 
