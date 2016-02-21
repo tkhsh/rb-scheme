@@ -7,10 +7,11 @@ module RScheme
     CLOSEPAREN = 5
     NIL = 6
     TRUE = 7
-    PRIMITIVE = 8
-    FUNCTION = 9
-    SYNTAX = 10
-    SUBROUTINE = 11
+    FALSE = 8
+    PRIMITIVE = 9
+    FUNCTION = 10
+    SYNTAX = 11
+    SUBROUTINE = 12
   end
 
   class LInt
