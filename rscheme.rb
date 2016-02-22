@@ -385,13 +385,7 @@ module RScheme
     end
 
     def subr_plus
-      lambda do |args, env|
-        val = args.reduce(0) do |sum, n|
-                raise "+ supports only numbers" if n.type != Type::INT
-                sum + n.value
-              end
-        LInt.new(val)
-      end
+      arithmetic_proc("+") { |res, n| res + n }
     end
 
     def add_primitive!(env)
