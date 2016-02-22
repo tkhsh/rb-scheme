@@ -372,6 +372,18 @@ module RScheme
       end
     end
 
+    def arithmetic_proc(op)
+      lambda do |args, env|
+        args.each do |e|
+          raise "#{op} supports only numbers" if e.type != Type::INT
+        end
+        fst = args.first
+        rest = args.drop(1)
+        val = rest.reduce(fst.value) { |res, n| yield(res, n.value) }
+        LInt.new(val)
+      end
+    end
+
     def subr_plus
       lambda do |args, env|
         val = args.reduce(0) do |sum, n|
