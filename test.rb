@@ -73,5 +73,15 @@ class TestParser < Minitest::Test
       assert_equal 1, expr2.cdr.car.value
       assert_equal 3, expr2.cdr.cdr.value
     end
+
+    # hash
+    StringIO.open("#t #f") do |strio|
+      parser = Parser.new(strio)
+
+      expr1 = parser.read_expr
+      assert_equal Type::TRUE, expr1.type
+      expr2 = parser.read_expr
+      assert_equal Type::FALSE, expr2.type
+    end
   end
 end
