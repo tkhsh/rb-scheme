@@ -374,11 +374,9 @@ module RScheme
 
     def subr_plus
       lambda do |args, env|
-        val = args.reduce(0) do |sum, a|
-                obj = eval(a, env)
-                raise "+ supports only numbers" if obj.type != Type::INT
-
-                sum + obj.value
+        val = args.reduce(0) do |sum, n|
+                raise "+ supports only numbers" if n.type != Type::INT
+                sum + n.value
               end
         LInt.new(val)
       end
