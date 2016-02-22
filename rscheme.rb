@@ -162,7 +162,7 @@ module RScheme
         fst = eval(obj.car, env)
         case fst.type
         when Type::SYNTAX
-          fst.syntax(obj.cdr, env)
+          fst.syntax.call(obj.cdr, env)
         when Type::SUBROUTINE
           args = map_eval(obj.cdr, env)
           fst.subr.call(args, env)
