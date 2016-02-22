@@ -388,9 +388,24 @@ module RScheme
       arithmetic_proc("+") { |res, n| res + n }
     end
 
+    def subr_minus
+      arithmetic_proc("-") { |res, n| res - n }
+    end
+
+    def subr_mul
+      arithmetic_proc("*") { |res, n| res * n }
+    end
+
+    def subr_div
+      arithmetic_proc("/") { |res, n| res / n }
+    end
+
     def add_primitive!(env)
       add_syntax!(env, :if, syntax_if)
       add_subrutine!(env, :+, subr_plus)
+      add_subrutine!(env, :-, subr_minus)
+      add_subrutine!(env, :*, subr_mul)
+      add_subrutine!(env, :/, subr_div)
       # todo ...
     end
 
