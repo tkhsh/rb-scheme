@@ -431,6 +431,10 @@ module RScheme
       @primitive = Primitive.new
     end
 
+    def set_source!(source)
+      @parser = Parser.new(source)
+    end
+
     def add_primitive!(env)
       @primitive.add_primitive!(env)
     end
