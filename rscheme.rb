@@ -348,16 +348,10 @@ module RScheme
     end
   end # Printer
 
-  class Executer
+  class Primitive
     include Evaluator
     include Helpers
     include Symbol
-    include Printer
-
-    # Environment
-    def init_env
-      cons(nil, nil)
-    end
 
     def syntax_if
       lambda do |form, env|
@@ -415,6 +409,18 @@ module RScheme
 
     def add_subrutine!(env, name, p)
       env.car = acons(intern(name), LSubroutine.new(name, p), env.car)
+    end
+
+  end # Primitive
+
+  class Executer
+    include Evaluator
+    include Helpers
+    include Symbol
+    include Printer
+
+    def init_env
+      cons(nil, nil)
     end
 
     def self.run
