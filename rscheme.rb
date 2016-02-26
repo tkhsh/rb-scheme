@@ -427,7 +427,8 @@ module RScheme
       new.exec
     end
 
-    def initialize
+    def initialize(source = STDIN)
+      set_source!(source)
       @primitive = Primitive.new
     end
 
@@ -435,17 +436,20 @@ module RScheme
       @parser = Parser.new(source)
     end
 
+    def read_expr
+      @parser.read_expr
+    end
+
     def add_primitive!(env)
       @primitive.add_primitive!(env)
     end
 
     def exec
-      parser = Parser.new(STDIN)
       env = init_env
       add_primitive!(env)
 
       loop do
-        expr = parser.read_expr
+        expr = read_expr
         return if expr.nil?
         print(eval(expr, env))
       end
