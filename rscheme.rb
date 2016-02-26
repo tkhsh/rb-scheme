@@ -427,6 +427,14 @@ module RScheme
       new.exec
     end
 
+    def initialize
+      @primitive = Primitive.new
+    end
+
+    def add_primitive!(env)
+      @primitive.add_primitive!(env)
+    end
+
     def exec
       parser = Parser.new(STDIN)
       env = init_env
