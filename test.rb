@@ -85,3 +85,30 @@ class TestParser < Minitest::Test
     end
   end
 end
+
+class TestExecuter < Minitest::Test
+  include RScheme
+
+  def setup
+    @executer = Executer.new
+    @env = @executer.init_env
+    @executer.add_primitive!(@env)
+  end
+
+  def eval_next(env)
+    expr = @executer.read_expr
+    raise if expr.nil?
+    @executer.eval(expr, env)
+  end
+
+  def test_eval
+    # subr_plus
+    StringIO.open("(+ 1 2 (+ 3 4))") do |strio|
+      @executer.set_source!(strio)
+
+      result = eval_next(@env)
+      assert_equal Type::INT, result.type
+      assert_equal 10, result.value
+    end
+  end
+end
