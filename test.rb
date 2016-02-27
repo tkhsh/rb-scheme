@@ -110,5 +110,17 @@ class TestExecuter < Minitest::Test
       assert_equal Type::INT, result.type
       assert_equal 10, result.value
     end
+
+    # syntax_if
+    StringIO.open("(if #t 1 2) (if #f 1 2)") do |strio|
+      @executer.set_source!(strio)
+
+      result1 = eval_next(@env)
+      assert_equal Type::INT, result1.type
+      assert_equal 1, result1.value
+      result2 = eval_next(@env)
+      assert_equal Type::INT, result2.type
+      assert_equal 2, result2.value
+    end
   end
 end
