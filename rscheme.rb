@@ -420,7 +420,7 @@ module RScheme
     include Printer
 
     def init_env
-      cons(nil, nil)
+      cons(LNIL, LNIL)
     end
 
     def self.run
