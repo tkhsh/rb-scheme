@@ -12,6 +12,7 @@ module RScheme
     FUNCTION = 10
     SYNTAX = 11
     SUBROUTINE = 12
+    LAMBDA = 13
   end
 
   class LInt
@@ -131,6 +132,20 @@ module RScheme
 
     def type
       Type::SUBROUTINE
+    end
+  end
+
+  class LLambda
+    attr_accessor :env, :params, :body
+
+    def initialize(env, params, body)
+      @env = env
+      @params = params
+      @body = body
+    end
+
+    def type
+      Type::LAMBDA
     end
   end
 
