@@ -149,7 +149,31 @@ module RScheme
     end
   end
 
-  module Evaluator
+  module Symbol
+    @@symbols = {}
+
+    def intern(name)
+      return @@symbols[name] if @@symbols.has_key?(name)
+
+      sym = LSymbol.new(name)
+      @@symbols[name] = sym
+      sym
+    end
+
+  end
+
+  module Helpers
+    # Constructor
+    def cons(car, cdr)
+      LCell.new(car, cdr)
+    end
+
+    def acons(key, val, cdr)
+      cons(cons(key, val), cdr)
+    end
+  end
+
+  class Evaluator
     def lookup_variable(var, env)
       env.each do |frame|
         frame.each do |bind|
@@ -190,30 +214,6 @@ module RScheme
     end
 
   end # Evaluator
-
-  module Symbol
-    @@symbols = {}
-
-    def intern(name)
-      return @@symbols[name] if @@symbols.has_key?(name)
-
-      sym = LSymbol.new(name)
-      @@symbols[name] = sym
-      sym
-    end
-
-  end
-
-  module Helpers
-    # Constructor
-    def cons(car, cdr)
-      LCell.new(car, cdr)
-    end
-
-    def acons(key, val, cdr)
-      cons(cons(key, val), cdr)
-    end
-  end
 
   class Parser
     include Helpers
@@ -364,9 +364,16 @@ module RScheme
   end # Printer
 
   class Primitive
-    include Evaluator
     include Helpers
     include Symbol
+
+    def initialize
+      @evaluator = Evaluator.new
+    end
+
+    def eval(obj, env)
+      @evaluator.eval(obj, env)
+    end
 
     def syntax_if
       lambda do |form, env|
@@ -429,7 +436,6 @@ module RScheme
   end # Primitive
 
   class Executer
-    include Evaluator
     include Helpers
     include Symbol
     include Printer
@@ -445,6 +451,7 @@ module RScheme
     def initialize(source = STDIN)
       set_source!(source)
       @primitive = Primitive.new
+      @evaluator = Evaluator.new
     end
 
     def set_source!(source)
@@ -457,6 +464,10 @@ module RScheme
 
     def add_primitive!(env)
       @primitive.add_primitive!(env)
+    end
+
+    def eval(obj, env)
+      @evaluator.eval(obj, env)
     end
 
     def exec
