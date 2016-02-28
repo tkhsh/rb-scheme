@@ -406,6 +406,23 @@ module RScheme
       @evaluator.eval(obj, env)
     end
 
+    def syntax_lambda
+      lambda do |form, env|
+        params = form.car
+        body = form.cdr
+
+        unless form.count < 1 || params.list? || body.list?
+          raise "Malformed lambda"
+        end
+
+        params.each do |p|
+          raise "lambda - parameters must be Symbol" unless p.type == Type::SYMBOL
+        end
+
+        LLambda.new(params, body, env)
+      end
+    end
+
     def syntax_if
       lambda do |form, env|
         raise "Malformed if" if form.count < 2
@@ -448,6 +465,7 @@ module RScheme
     end
 
     def add_primitive!(env)
+      add_syntax!(env, :lambda, syntax_lambda)
       add_syntax!(env, :if, syntax_if)
       add_subrutine!(env, :+, subr_plus)
       add_subrutine!(env, :-, subr_minus)
