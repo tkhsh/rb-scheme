@@ -49,11 +49,11 @@ module RScheme
       end
     end
 
-    def cdar
+    def cadr
       @cdr.car
     end
 
-    def cddar
+    def caddr
       @cdr.cdr.car
     end
 
@@ -374,9 +374,9 @@ module RScheme
 
         cond = eval(form.car, env)
         if cond.type != Type::FALSE
-          eval(form.cdar, env)
+          eval(form.cadr, env)
         else
-          eval(form.cddar, env)
+          eval(form.caddr, env)
         end
       end
     end
