@@ -171,9 +171,19 @@ module RScheme
     def acons(key, val, cdr)
       cons(cons(key, val), cdr)
     end
+
+    def array_to_list(array)
+      result = LNIL
+      array.reverse_each do |e|
+        result = cons(e, result)
+      end
+      result
+    end
   end
 
   class Evaluator
+    include Helpers
+
     def lookup_variable(var, env)
       env.each do |frame|
         frame.each do |bind|
@@ -185,7 +195,8 @@ module RScheme
     end
 
     def map_eval(list, env)
-      list.map { |e| eval(e, env) }
+      result_array = list.map { |e| eval(e, env) }
+      array_to_list(result_array)
     end
 
     def eval(obj, env)
