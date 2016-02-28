@@ -199,6 +199,23 @@ module RScheme
       array_to_list(result_array)
     end
 
+    def progn(expr_list, env)
+      expr_list.map { |expr| eval(expr, env) }.last
+    end
+
+    def extend_env(env, vars, vals)
+      frame = LNIL
+      vars.to_a.zip(vals.to_a) do |var, val|
+        frame = acons(var, val, frame)
+      end
+      cons(frame, env)
+    end
+
+    def apply(fn, args, env)
+      extended = extend_env(env, fn.params, args)
+      progn(fn.body, extended)
+    end
+
     def eval(obj, env)
       case obj.type
       when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
@@ -216,6 +233,9 @@ module RScheme
         when Type::SUBROUTINE
           args = map_eval(obj.cdr, env)
           fst.subr.call(args, env)
+        when Type::LAMBDA
+          args = map_eval(obj.cdr, env)
+          apply(fst, args, env)
         else
           raise "application - unexpected type #{fst.type}"
         end
