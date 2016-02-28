@@ -136,12 +136,12 @@ module RScheme
   end
 
   class LLambda
-    attr_accessor :env, :params, :body
+    attr_accessor :params, :body, :env
 
-    def initialize(env, params, body)
-      @env = env
+    def initialize(params, body, env)
       @params = params
       @body = body
+      @env = env
     end
 
     def type
