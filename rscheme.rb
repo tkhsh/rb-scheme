@@ -487,7 +487,6 @@ module RScheme
   class Executer
     extend Forwardable
     include Helpers
-    include Symbol
 
     def_delegators :@parser, :read_expr
     def_delegators :@primitive, :add_primitive!
