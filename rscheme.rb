@@ -255,7 +255,7 @@ module RScheme
 
     EOF = nil
 
-    def_delegators :@input, :getc
+    def_delegator :@input, :getc
 
     def initialize(input)
       @input = input
@@ -400,7 +400,7 @@ module RScheme
     include Helpers
     include Symbol
 
-    def_delegators :@evaluator, :eval
+    def_delegator :@evaluator, :eval
 
     def initialize
       @evaluator = Evaluator.new
@@ -488,10 +488,10 @@ module RScheme
     extend Forwardable
     include Helpers
 
-    def_delegators :@parser, :read_expr
-    def_delegators :@primitive, :add_primitive!
-    def_delegators :@evaluator, :eval
-    def_delegators :@printer, :print
+    def_delegator :@parser, :read_expr
+    def_delegator :@primitive, :add_primitive!
+    def_delegator :@evaluator, :eval
+    def_delegator :@printer, :print
 
     def init_env
       cons(LNIL, LNIL)
