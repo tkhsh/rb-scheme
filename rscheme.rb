@@ -388,7 +388,7 @@ module RScheme
   end # Parser
 
   require "yaml"
-  module Printer
+  class Printer
     def print(obj)
       puts YAML.dump(obj)
     end
@@ -487,7 +487,6 @@ module RScheme
   class Executer
     include Helpers
     include Symbol
-    include Printer
 
     def init_env
       cons(LNIL, LNIL)
@@ -501,6 +500,7 @@ module RScheme
       set_source!(source)
       @primitive = Primitive.new
       @evaluator = Evaluator.new
+      @printer = Printer.new
     end
 
     def set_source!(source)
@@ -517,6 +517,10 @@ module RScheme
 
     def eval(obj, env)
       @evaluator.eval(obj, env)
+    end
+
+    def print(obj)
+      @printer.print(obj)
     end
 
     def exec
