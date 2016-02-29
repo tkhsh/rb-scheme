@@ -1,3 +1,5 @@
+require "forwardable"
+
 module RScheme
   module Type
     INT = 1
@@ -247,17 +249,16 @@ module RScheme
   end # Evaluator
 
   class Parser
+    extend Forwardable
     include Helpers
     include Symbol
 
     EOF = nil
 
+    def_delegators :@input, :getc
+
     def initialize(input)
       @input = input
-    end
-
-    def getc
-      @input.getc
     end
 
     def peek
@@ -395,15 +396,14 @@ module RScheme
   end # Printer
 
   class Primitive
+    extend Forwardable
     include Helpers
     include Symbol
 
+    def_delegators :@evaluator, :eval
+
     def initialize
       @evaluator = Evaluator.new
-    end
-
-    def eval(obj, env)
-      @evaluator.eval(obj, env)
     end
 
     def syntax_lambda
@@ -485,8 +485,14 @@ module RScheme
   end # Primitive
 
   class Executer
+    extend Forwardable
     include Helpers
     include Symbol
+
+    def_delegators :@parser, :read_expr
+    def_delegators :@primitive, :add_primitive!
+    def_delegators :@evaluator, :eval
+    def_delegators :@printer, :print
 
     def init_env
       cons(LNIL, LNIL)
@@ -505,22 +511,6 @@ module RScheme
 
     def set_source!(source)
       @parser = Parser.new(source)
-    end
-
-    def read_expr
-      @parser.read_expr
-    end
-
-    def add_primitive!(env)
-      @primitive.add_primitive!(env)
-    end
-
-    def eval(obj, env)
-      @evaluator.eval(obj, env)
-    end
-
-    def print(obj)
-      @printer.print(obj)
     end
 
     def exec
