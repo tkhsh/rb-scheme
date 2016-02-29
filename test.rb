@@ -122,5 +122,14 @@ class TestExecuter < Minitest::Test
       assert_equal Type::INT, result2.type
       assert_equal 2, result2.value
     end
+
+    # syntax_lambda
+    StringIO.open("((lambda (x y) (* x y 2)) 5 7)") do |strio|
+      @executer.set_source!(strio)
+
+      result = eval_next(@env)
+      assert_equal Type::INT, result.type
+      assert_equal 70, result.value
+    end
   end
 end
