@@ -39,10 +39,10 @@ class TestParser < Minitest::Test
 
       expr1 = parser.read_expr
       assert_equal "quote", expr1.car.name
-      assert_equal Type::CELL, expr1.type
+      assert expr1.list?
       expr2 = parser.read_expr
       assert_equal "quote", expr2.car.name
-      assert_equal Type::CELL, expr2.type
+      assert expr2.list?
     end
 
     # list

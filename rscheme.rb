@@ -314,7 +314,7 @@ module RScheme
 
     def read_quote
       sym = intern("quote")
-      cons(sym, read_expr)
+      cons(sym, cons(read_expr, LNIL))
     end
 
     def read_number(value)
