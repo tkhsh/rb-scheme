@@ -411,7 +411,7 @@ module RScheme
         params = form.car
         body = form.cdr
 
-        unless form.count < 1 || params.list? || body.list?
+        unless form.count > 1 && params.list? && body.list?
           raise "Malformed lambda"
         end
 
