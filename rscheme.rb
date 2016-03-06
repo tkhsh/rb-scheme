@@ -424,6 +424,13 @@ module RScheme
       end
     end
 
+    def syntax_quote
+      lambda do |form, env|
+        raise "Malformed quote" unless form.count == 1
+        form.car
+      end
+    end
+
     def syntax_define
       lambda do |form, env|
         raise "Malformed define" unless form.count > 1
@@ -494,6 +501,7 @@ module RScheme
 
     def add_primitive!(env)
       add_syntax!(env, "lambda", syntax_lambda)
+      add_syntax!(env, "quote", syntax_quote)
       add_syntax!(env, "define", syntax_define)
       add_syntax!(env, "if", syntax_if)
       add_subrutine!(env, "cons", subr_cons)
