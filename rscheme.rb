@@ -15,6 +15,7 @@ module RScheme
     SYNTAX = 11
     SUBROUTINE = 12
     LAMBDA = 13
+    MACRO = 14
   end
 
   class LInt
@@ -151,6 +152,19 @@ module RScheme
     end
   end
 
+  class LMacro
+    attr_accessor :name, :form
+
+    def initialize(name, form)
+      @name = name
+      @form = form
+    end
+
+    def type
+      Type::MACRO
+    end
+  end
+
   module Symbol
     @@symbols = {}
 
@@ -239,6 +253,9 @@ module RScheme
         when Type::LAMBDA
           args = map_eval(obj.cdr, env)
           apply(fst, args, env)
+        when Type::MACRO
+          expanded = apply(fst.form, obj.cdr, env)
+          eval(expanded, env)
         else
           raise "application - unexpected type #{fst.type}"
         end
