@@ -423,6 +423,16 @@ module RScheme
       end
     end
 
+    def syntax_define
+      lambda do |form, env|
+        raise "Malformed define" unless form.count > 1
+        sym = form.car
+        body = form.cadr
+        raise "define - value must be bound to Symbol" unless sym.type == Type::SYMBOL
+        add_variable!(env, sym, eval(body, env))
+      end
+    end
+
     def syntax_if
       lambda do |form, env|
         raise "Malformed if" if form.count < 2
@@ -464,8 +474,13 @@ module RScheme
       arithmetic_proc("/") { |res, n| res / n }
     end
 
+    def add_variable!(env, sym, value)
+      env.car = acons(sym, value, env.car)
+    end
+
     def add_primitive!(env)
       add_syntax!(env, :lambda, syntax_lambda)
+      add_syntax!(env, :define, syntax_define)
       add_syntax!(env, :if, syntax_if)
       add_subrutine!(env, :+, subr_plus)
       add_subrutine!(env, :-, subr_minus)
