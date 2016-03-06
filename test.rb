@@ -131,5 +131,15 @@ class TestExecuter < Minitest::Test
       assert_equal Type::INT, result.type
       assert_equal 70, result.value
     end
+
+    # syntax_define
+    StringIO.open("(define a (+ 1 2)) a") do |strio|
+      @executer.set_source!(strio)
+
+      eval_next(@env)
+      result = eval_next(@env)
+      assert_equal Type::INT, result.type
+      assert_equal 3, result.value
+    end
   end
 end
