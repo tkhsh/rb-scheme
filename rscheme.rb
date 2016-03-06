@@ -441,6 +441,16 @@ module RScheme
       end
     end
 
+    def syntax_define_macro
+      lambda do |form, env|
+        raise "Malformed define-macro" unless form.count > 1
+        sym = form.car
+        body = form.cadr
+        raise "define-macro - value must be bound to Symbol" unless sym.type == Type::SYMBOL
+        add_variable!(env, sym, LMacro.new(sym.name, eval(body, env)))
+      end
+    end
+
     def syntax_if
       lambda do |form, env|
         raise "Malformed if" if form.count < 2
@@ -503,6 +513,7 @@ module RScheme
       add_syntax!(env, "lambda", syntax_lambda)
       add_syntax!(env, "quote", syntax_quote)
       add_syntax!(env, "define", syntax_define)
+      add_syntax!(env, "define-macro", syntax_define_macro)
       add_syntax!(env, "if", syntax_if)
       add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "list", subr_list)
