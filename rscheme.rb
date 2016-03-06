@@ -447,6 +447,13 @@ module RScheme
       end
     end
 
+    def subr_cons
+      lambda do |args, env|
+        raise unless args.count == 2
+        cons(args.car, args.cadr)
+      end
+    end
+
     def arithmetic_proc(op)
       lambda do |args, env|
         args.each do |e|
@@ -483,6 +490,7 @@ module RScheme
       add_syntax!(env, "lambda", syntax_lambda)
       add_syntax!(env, "define", syntax_define)
       add_syntax!(env, "if", syntax_if)
+      add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "+", subr_plus)
       add_subrutine!(env, "-", subr_minus)
       add_subrutine!(env, "*", subr_mul)
