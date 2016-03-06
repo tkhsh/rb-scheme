@@ -155,10 +155,11 @@ module RScheme
     @@symbols = {}
 
     def intern(name)
-      return @@symbols[name] if @@symbols.has_key?(name)
+      key = name.to_sym
+      return @@symbols[key] if @@symbols.has_key?(key)
 
       sym = LSymbol.new(name)
-      @@symbols[name] = sym
+      @@symbols[key] = sym
       sym
     end
 
@@ -312,7 +313,7 @@ module RScheme
     end
 
     def read_quote
-      sym = intern(:quote)
+      sym = intern("quote")
       cons(sym, read_expr)
     end
 
@@ -341,7 +342,7 @@ module RScheme
       while symbol_rp === peek
         result += getc
       end
-      intern(result.to_sym)
+      intern(result)
     end
 
     def negative_number_pred
@@ -479,13 +480,13 @@ module RScheme
     end
 
     def add_primitive!(env)
-      add_syntax!(env, :lambda, syntax_lambda)
-      add_syntax!(env, :define, syntax_define)
-      add_syntax!(env, :if, syntax_if)
-      add_subrutine!(env, :+, subr_plus)
-      add_subrutine!(env, :-, subr_minus)
-      add_subrutine!(env, :*, subr_mul)
-      add_subrutine!(env, :/, subr_div)
+      add_syntax!(env, "lambda", syntax_lambda)
+      add_syntax!(env, "define", syntax_define)
+      add_syntax!(env, "if", syntax_if)
+      add_subrutine!(env, "+", subr_plus)
+      add_subrutine!(env, "-", subr_minus)
+      add_subrutine!(env, "*", subr_mul)
+      add_subrutine!(env, "/", subr_div)
       # todo ...
     end
 
