@@ -141,5 +141,19 @@ class TestExecuter < Minitest::Test
       assert_equal Type::INT, result.type
       assert_equal 3, result.value
     end
+
+    # syntax_macro
+    macro_exprs = <<-EXPRS
+    (define-macro my-not
+      (lambda (cond) (list 'if cond #f #t)))
+    (my-not #t)
+    EXPRS
+    StringIO.open(macro_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      eval_next(@env)
+      result = eval_next(@env)
+      assert_equal Type::FALSE, result.type
+    end
   end
 end
