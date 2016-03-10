@@ -155,5 +155,22 @@ class TestExecuter < Minitest::Test
       result = eval_next(@env)
       assert_equal Type::FALSE, result.type
     end
+
+    # syntax_set!
+    set_exprs = <<-EXPRS
+    (define x 10)
+    x
+    (set! x 20)
+    x
+    EXPRS
+    StringIO.open(set_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      eval_next(@env)
+      result1 = eval_next(@env)
+      assert_equal 10, result1.value
+      result2 = eval_next(@env)
+      assert_equal 20, result2.value
+    end
   end
 end
