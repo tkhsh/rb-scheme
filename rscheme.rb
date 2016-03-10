@@ -419,9 +419,11 @@ module RScheme
     include Symbol
 
     def_delegator :@evaluator, :eval
+    def_delegator :@printer, :print
 
     def initialize
       @evaluator = Evaluator.new
+      @printer = Printer.new
     end
 
     def syntax_lambda
@@ -522,6 +524,14 @@ module RScheme
       arithmetic_proc("/") { |res, n| res / n }
     end
 
+    def subr_print
+      lambda do |args, env|
+        args.each { |i| print(eval(i, env)) }
+        puts
+        LNIL
+      end
+    end
+
     def add_variable!(env, sym, value)
       env.car = acons(sym, value, env.car)
     end
@@ -538,6 +548,7 @@ module RScheme
       add_subrutine!(env, "-", subr_minus)
       add_subrutine!(env, "*", subr_mul)
       add_subrutine!(env, "/", subr_div)
+      add_subrutine!(env, "print", subr_print)
       # todo ...
     end
 
