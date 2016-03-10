@@ -204,7 +204,7 @@ module RScheme
     def lookup_variable(var, env)
       env.each do |frame|
         frame.each do |bind|
-          return bind.cdr if var.name == bind.car.name
+          return bind if var.name == bind.car.name
         end
       end
 
@@ -239,7 +239,7 @@ module RScheme
            Type::TRUE, Type::FALSE, Type::NIL
         obj
       when Type::SYMBOL
-        lookup_variable(obj, env)
+        lookup_variable(obj, env).cdr
       when Type::CELL
         raise "Invalid application" unless obj.list?
 
