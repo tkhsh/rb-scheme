@@ -557,6 +557,15 @@ module RScheme
       end
     end
 
+    def subr_gt
+      lambda do |args, env|
+        unless args.all? { |e| e.type == Type::INT }
+          raise "= supports only numbers"
+        end
+        boolean(args.car.value > args.cadr.value)
+      end
+    end
+
     def subr_print
       lambda do |args, env|
         args.each { |i| print(eval(i, env)) }
@@ -584,6 +593,7 @@ module RScheme
       add_subrutine!(env, "*", subr_mul)
       add_subrutine!(env, "/", subr_div)
       add_subrutine!(env, "=", subr_num_equal)
+      add_subrutine!(env, ">", subr_gt)
       add_subrutine!(env, "print", subr_print)
       # todo ...
     end
