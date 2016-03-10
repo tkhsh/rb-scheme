@@ -418,7 +418,7 @@ module RScheme
     include Helpers
     include Symbol
 
-    def_delegator :@evaluator, :eval
+    def_delegators :@evaluator, :eval, :lookup_variable
     def_delegator :@printer, :print
 
     def initialize
@@ -483,6 +483,19 @@ module RScheme
       end
     end
 
+    def syntax_set!
+      lambda do |form, env|
+        unless form.count == 2 && form.car.type == Type::SYMBOL
+          raise "Malformed set!"
+        end
+
+        bind = lookup_variable(form.car, env)
+        value = eval(form.cadr, env)
+        bind.cdr = value
+        value
+      end
+    end
+
     def subr_cons
       lambda do |args, env|
         raise unless args.count == 2
@@ -542,6 +555,7 @@ module RScheme
       add_syntax!(env, "define", syntax_define)
       add_syntax!(env, "define-macro", syntax_define_macro)
       add_syntax!(env, "if", syntax_if)
+      add_syntax!(env, "set!", syntax_set!)
       add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "list", subr_list)
       add_subrutine!(env, "+", subr_plus)
