@@ -196,6 +196,10 @@ module RScheme
       end
       result
     end
+
+    def boolean(value)
+      value ? LTrue : LFalse
+    end
   end
 
   class Evaluator
@@ -509,6 +513,13 @@ module RScheme
       end
     end
 
+    def subr_eq?
+      lambda do |args, evn|
+        raise "Malformed eq?" unless args.count == 2
+        args.car == args.cadr
+      end
+    end
+
     def arithmetic_proc(op)
       lambda do |args, env|
         args.each do |e|
@@ -558,6 +569,7 @@ module RScheme
       add_syntax!(env, "set!", syntax_set!)
       add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "list", subr_list)
+      add_subrutine!(env, "eq?", subr_eq?)
       add_subrutine!(env, "+", subr_plus)
       add_subrutine!(env, "-", subr_minus)
       add_subrutine!(env, "*", subr_mul)
