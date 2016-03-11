@@ -603,7 +603,7 @@ module RScheme
       add_subrutine!(env, "/", subr_div)
       add_subrutine!(env, "=", subr_num_equal)
       add_subrutine!(env, ">", subr_gt)
-      add_subrutine!(env, "=", subr_lt)
+      add_subrutine!(env, "<", subr_lt)
       add_subrutine!(env, "print", subr_print)
       # todo ...
     end
