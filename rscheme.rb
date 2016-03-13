@@ -21,12 +21,13 @@ module RScheme
       # Exmaple
       #   base.name => RScheme::LInt
       #   type_name => INT
-      #
       type_name = base.name.split('::').last[1..-1].upcase
+
       base.class_eval %Q{
         def self.type
           #{const_get(type_name)}
         end
+
         def type
           self.class.type
         end
@@ -99,7 +100,7 @@ module RScheme
     include Type
   end
 
-  class LNIL
+  class LNil
     include Type
   end
 
@@ -181,7 +182,7 @@ module RScheme
     end
 
     def array_to_list(array)
-      result = LNIL
+      result = LNil
       array.reverse_each do |e|
         result = cons(e, result)
       end
@@ -216,7 +217,7 @@ module RScheme
     end
 
     def extend_env(env, vars, vals)
-      frame = LNIL
+      frame = LNil
       vars.to_a.zip(vals.to_a) do |var, val|
         frame = acons(var, val, frame)
       end
@@ -281,8 +282,8 @@ module RScheme
     end
 
     def reverse_list(list)
-      return LNIL if list.type == Type::NIL
-      list.reduce(LNIL) { |res, e| cons(e, res) }
+      return LNil if list.type == Type::NIL
+      list.reduce(LNil) { |res, e| cons(e, res) }
     end
 
     def skip_line
@@ -299,7 +300,7 @@ module RScheme
     end
 
     def read_list
-      acc = LNIL
+      acc = LNil
       loop do
         obj = read_expr
         raise "read_list: Unclosed parenthesis" if obj.nil?
@@ -326,7 +327,7 @@ module RScheme
 
     def read_quote
       sym = intern("quote")
-      cons(sym, cons(read_expr, LNIL))
+      cons(sym, cons(read_expr, LNil))
     end
 
     def read_number(value)
@@ -570,7 +571,7 @@ module RScheme
       lambda do |args, env|
         args.each { |i| print(eval(i, env)) }
         puts
-        LNIL
+        LNil
       end
     end
 
@@ -619,7 +620,7 @@ module RScheme
     def_delegator :@printer, :print
 
     def init_env
-      cons(LNIL, LNIL)
+      cons(LNil, LNil)
     end
 
     def self.run
