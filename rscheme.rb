@@ -16,21 +16,36 @@ module RScheme
     SUBROUTINE = 12
     LAMBDA = 13
     MACRO = 14
-  end
+
+    def self.included(base)
+      # Exmaple
+      #   base.name => RScheme::LInt
+      #   type_name => INT
+      #
+      type_name = base.name.split('::').last[1..-1].upcase
+      base.class_eval %Q{
+        def self.type
+          #{const_get(type_name)}
+        end
+        def type
+          self.class.type
+        end
+      }
+    end
+  end # Type
 
   class LInt
+    include Type
+
     attr_accessor :value
 
     def initialize(value)
       @value = value
     end
-
-    def type
-      Type::INT
-    end
   end
 
   class LCell
+    include Type
     include Enumerable
 
     attr_accessor :car, :cdr
@@ -38,10 +53,6 @@ module RScheme
     def initialize(car = nil, cdr = nil)
       @car = car
       @cdr = cdr
-    end
-
-    def type
-      Type::CELL
     end
 
     def each
@@ -71,74 +82,60 @@ module RScheme
   end
 
   class LSymbol
+    include Type
+
     attr_accessor :name
 
     def initialize(name)
       @name = name
     end
-
-    def type
-      Type::SYMBOL
-    end
   end
 
   class LDot
-    def self.type
-      Type::DOT
-    end
+    include Type
   end
 
   class LCloseParen
-    def self.type
-      Type::CLOSEPAREN
-    end
+    include Type
   end
 
   class LNIL
-    def self.type
-      Type::NIL
-    end
+    include Type
   end
 
   class LTrue
-    def self.type
-      Type::TRUE
-    end
+    include Type
   end
 
   class LFalse
-    def self.type
-      Type::FALSE
-    end
+    include Type
   end
 
   class LSyntax
+    include Type
+
     attr_accessor :name, :syntax
 
     def initialize(name, syntax)
       @name = name
       @syntax = syntax
     end
-
-    def type
-      Type::SYNTAX
-    end
   end
 
   class LSubroutine
+    include Type
+
     attr_accessor :name, :subr
 
     def initialize(name, subr)
       @name = name
       @subr = subr
     end
-
-    def type
-      Type::SUBROUTINE
-    end
   end
 
   class LLambda
+    include Type
+
     attr_accessor :params, :body, :env
 
     def initialize(params, body, env)
@@ -146,22 +143,16 @@ module RScheme
       @body = body
       @env = env
     end
-
-    def type
-      Type::LAMBDA
-    end
   end
 
   class LMacro
+    include Type
+
     attr_accessor :name, :form
 
     def initialize(name, form)
       @name = name
       @form = form
-    end
-
-    def type
-      Type::MACRO
     end
   end
 
