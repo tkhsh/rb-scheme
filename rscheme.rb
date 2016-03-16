@@ -18,7 +18,7 @@ module RScheme
     MACRO = 14
 
     def self.included(base)
-      # Exmaple
+      # Example
       #   base.name => RScheme::LInt
       #   type_name => INT
       type_name = base.name.split('::').last[1..-1].upcase
