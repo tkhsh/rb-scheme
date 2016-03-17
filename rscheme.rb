@@ -492,6 +492,14 @@ module RScheme
       end
     end
 
+    def syntax_begin
+      lambda do |form, env|
+        last = LInt.new(0)
+        form.each { |e| last = eval(e, env) } unless form.type == Type::NIL
+        last
+      end
+    end
+
     def subr_cons
       lambda do |args, env|
         raise unless args.count == 2
@@ -586,6 +594,7 @@ module RScheme
       add_syntax!(env, "define-macro", syntax_define_macro)
       add_syntax!(env, "if", syntax_if)
       add_syntax!(env, "set!", syntax_set!)
+      add_syntax!(env, "begin", syntax_begin)
       add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "list", subr_list)
       add_subrutine!(env, "eq?", subr_eq?)
