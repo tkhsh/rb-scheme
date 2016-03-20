@@ -518,6 +518,15 @@ module RbScheme
       end
     end
 
+    def subr_cdr
+      lambda do |args, env|
+        raise unless args.count == 1
+        fst = args.first
+        raise unless fst.list?
+        fst.cdr
+      end
+    end
+
     def subr_list
       lambda do |args, env|
         args
@@ -608,6 +617,7 @@ module RbScheme
       add_syntax!(env, "begin", syntax_begin)
       add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "car", subr_car)
+      add_subrutine!(env, "cdr", subr_cdr)
       add_subrutine!(env, "list", subr_list)
       add_subrutine!(env, "eq?", subr_eq?)
       add_subrutine!(env, "+", subr_plus)
