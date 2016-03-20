@@ -558,6 +558,14 @@ module RbScheme
       end
     end
 
+    def subr_null?
+      lambda do |args, evn|
+        raise "Malformed null?" unless args.count == 1
+        fst = args.car
+        boolean(fst.type == Type::NIL)
+      end
+    end
+
     def arithmetic_proc(op)
       lambda do |args, env|
         args.each do |e|
@@ -640,6 +648,7 @@ module RbScheme
       add_subrutine!(env, "eq?", subr_eq?)
       add_subrutine!(env, "list?", subr_list?)
       add_subrutine!(env, "pair?", subr_pair?)
+      add_subrutine!(env, "null?", subr_null?)
       add_subrutine!(env, "+", subr_plus)
       add_subrutine!(env, "-", subr_minus)
       add_subrutine!(env, "*", subr_mul)
