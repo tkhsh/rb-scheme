@@ -1,6 +1,6 @@
 require "forwardable"
 
-module RScheme
+module RbScheme
   module Type
     INT = 1
     CELL = 2
@@ -19,7 +19,7 @@ module RScheme
 
     def self.included(base)
       # Example
-      #   base.name => RScheme::LInt
+      #   base.name => RbScheme::LInt
       #   type_name => INT
       type_name = base.name.split('::').last[1..-1].upcase
 
@@ -660,4 +660,4 @@ module RScheme
   end # Executer
 end
 
-# RScheme::Executer.run
+# RbScheme::Executer.run

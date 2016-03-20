@@ -3,7 +3,7 @@ require 'stringio'
 require './rscheme'
 
 class TestParser < Minitest::Test
-  include RScheme
+  include RbScheme
 
   def test_read_expr
     # integer
@@ -87,7 +87,7 @@ class TestParser < Minitest::Test
 end
 
 class TestExecuter < Minitest::Test
-  include RScheme
+  include RbScheme
 
   def setup
     @executer = Executer.new
