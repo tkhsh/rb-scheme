@@ -453,6 +453,7 @@ module RbScheme
         body = form.cadr
         raise "define - value must be bound to Symbol" unless sym.type == Type::SYMBOL
         add_variable!(env, sym, eval(body, env))
+        LNil
       end
     end
 
@@ -463,6 +464,7 @@ module RbScheme
         body = form.cadr
         raise "define-macro - value must be bound to Symbol" unless sym.type == Type::SYMBOL
         add_variable!(env, sym, LMacro.new(sym.name, eval(body, env)))
+        LNil
       end
     end
 
