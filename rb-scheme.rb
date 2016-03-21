@@ -207,8 +207,9 @@ module RbScheme
       raise "Unbound variable - #{var.name}"
     end
 
-    def map_eval(list, env)
-      result_array = list.map { |e| eval(e, env) }
+    def map_eval(lst, env)
+      return LNil unless lst.type == Type::CELL && lst.list?
+      result_array = lst.map { |e| eval(e, env) }
       array_to_list(result_array)
     end
 

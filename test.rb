@@ -172,5 +172,13 @@ class TestExecuter < Minitest::Test
       result2 = eval_next(@env)
       assert_equal 20, result2.value
     end
+
+    # function without args
+    StringIO.open("(list)") do |strio|
+      @executer.set_source!(strio)
+
+      result = eval_next(@env)
+      assert_equal Type::NIL, result.type
+    end
   end
 end
