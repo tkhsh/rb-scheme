@@ -1,6 +1,6 @@
 require 'minitest/autorun'
 require 'stringio'
-require './rb-scheme'
+require 'rb-scheme'
 
 class TestParser < Minitest::Test
   include RbScheme
