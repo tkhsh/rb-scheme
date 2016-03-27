@@ -13,7 +13,7 @@ module RbScheme
     end
 
     def map_eval(lst, env)
-      return LNil.instance unless lst.type == Type::CELL && lst.list?
+      return LNil.instance unless LCell === lst && lst.list?
       result_array = lst.map { |e| eval(e, env) }
       array_to_list(result_array)
     end
@@ -36,25 +36,25 @@ module RbScheme
     end
 
     def eval(obj, env)
-      case obj.type
-      when Type::INT, Type::TRUE, Type::FALSE, Type::NIL
+      case obj
+      when LInt, LTrue, LFalse, LNil
         obj
-      when Type::SYMBOL
+      when LSymbol
         lookup_variable(obj, env).cdr
-      when Type::CELL
+      when LCell
         raise "Invalid application" unless obj.list?
 
         fst = eval(obj.car, env)
-        case fst.type
-        when Type::SYNTAX
+        case fst
+        when LSyntax
           fst.syntax.call(obj.cdr, env)
-        when Type::SUBROUTINE
+        when LSubroutine
           args = map_eval(obj.cdr, env)
           fst.subr.call(args, env)
-        when Type::LAMBDA
+        when LLambda
           args = map_eval(obj.cdr, env)
           apply(fst, args, env)
-        when Type::MACRO
+        when LMacro
           expanded = apply(fst.form, obj.cdr, env)
           eval(expanded, env)
         else

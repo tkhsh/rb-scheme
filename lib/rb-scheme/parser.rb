@@ -19,7 +19,7 @@ module RbScheme
     end
 
     def reverse_list(list)
-      return LNil.instance if list.type == Type::NIL
+      return LNil.instance if LNil === list
       list.reduce(LNil.instance) { |res, e| cons(e, res) }
     end
 
@@ -42,16 +42,16 @@ module RbScheme
         obj = read_expr
         raise "read_list: Unclosed parenthesis" if obj.nil?
 
-        case obj.type
-        when Type::CLOSEPAREN
+        case obj
+        when LCloseParen
           return reverse_list(acc)
-        when Type::DOT
+        when LDot
           last = read_expr
           close = read_expr
-          if close.nil? || close.type != Type::CLOSEPAREN
+          if close.nil? || !(LCloseParen === close)
             raise "read_list: Unclosed parenthesis"
           end
-          if acc.type == Type::NIL
+          if LNil === acc
             raise "read_list: dotted list must have car"
           end
 

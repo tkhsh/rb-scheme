@@ -22,7 +22,7 @@ module RbScheme
         end
 
         params.each do |p|
-          raise "lambda - parameters must be Symbol" unless p.type == Type::SYMBOL
+          raise "lambda - parameters must be Symbol" unless LSymbol === p
         end
 
         LLambda.new(params, body, env)
@@ -41,7 +41,7 @@ module RbScheme
         raise "Malformed define" unless form.count > 1
         sym = form.car
         body = form.cadr
-        raise "define - value must be bound to Symbol" unless sym.type == Type::SYMBOL
+        raise "define - value must be bound to Symbol" unless LSymbol === sym
         add_variable!(env, sym, eval(body, env))
         LNil.instance
       end
@@ -52,7 +52,7 @@ module RbScheme
         raise "Malformed define-macro" unless form.count > 1
         sym = form.car
         body = form.cadr
-        raise "define-macro - value must be bound to Symbol" unless sym.type == Type::SYMBOL
+        raise "define-macro - value must be bound to Symbol" unless LSymbol === sym
         add_variable!(env, sym, LMacro.new(sym.name, eval(body, env)))
         LNil.instance
       end
@@ -63,7 +63,7 @@ module RbScheme
         raise "Malformed if" if form.count < 2
 
         cond = eval(form.car, env)
-        if cond.type != Type::FALSE
+        unless LFalse === cond
           eval(form.cadr, env)
         else
           eval(form.caddr, env)
@@ -73,7 +73,7 @@ module RbScheme
 
     def syntax_set!
       lambda do |form, env|
-        unless form.count == 2 && form.car.type == Type::SYMBOL
+        unless form.count == 2 && LSymbol === form.car
           raise "Malformed set!"
         end
 
@@ -87,7 +87,7 @@ module RbScheme
     def syntax_begin
       lambda do |form, env|
         last = LInt.new(0)
-        form.each { |e| last = eval(e, env) } unless form.type == Type::NIL
+        form.each { |e| last = eval(e, env) } unless LNil === form
         last
       end
     end
@@ -134,7 +134,7 @@ module RbScheme
       lambda do |args, env|
         raise "Malformed list?" unless args.count == 1
         fst = args.car
-        return LFalse.instance unless fst.type == Type::CELL
+        return LFalse.instance unless LCell === fst
         boolean(fst.list?)
       end
     end
@@ -143,7 +143,7 @@ module RbScheme
       lambda do |args, env|
         raise "Malformed pair?" unless args.count == 1
         fst = args.car
-        return LFalse.instance unless fst.type == Type::CELL
+        return LFalse.instance unless LCell === fst
         LTrue.instance
       end
     end
@@ -152,14 +152,14 @@ module RbScheme
       lambda do |args, evn|
         raise "Malformed null?" unless args.count == 1
         fst = args.car
-        boolean(fst.type == Type::NIL)
+        boolean(LNil === fst)
       end
     end
 
     def arithmetic_proc(op)
       lambda do |args, env|
         args.each do |e|
-          raise "#{op} supports only numbers" if e.type != Type::INT
+          raise "#{op} supports only numbers" unless LInt === e
         end
         fst = args.first
         rest = args.drop(1)
@@ -186,7 +186,7 @@ module RbScheme
 
     def subr_num_equal
       lambda do |args, env|
-        unless args.all? { |e| e.type == Type::INT }
+        unless args.all? { |e| LInt === e }
           raise "= supports only numbers"
         end
         boolean(args.car.value == args.cadr.value)
@@ -195,7 +195,7 @@ module RbScheme
 
     def subr_gt
       lambda do |args, env|
-        unless args.all? { |e| e.type == Type::INT }
+        unless args.all? { |e| LInt === e }
           raise "= supports only numbers"
         end
         boolean(args.car.value > args.cadr.value)
@@ -204,7 +204,7 @@ module RbScheme
 
     def subr_lt
       lambda do |args, env|
-        unless args.all? { |e| e.type == Type::INT }
+        unless args.all? { |e| LInt === e }
           raise "= supports only numbers"
         end
         boolean(args.car.value < args.cadr.value)

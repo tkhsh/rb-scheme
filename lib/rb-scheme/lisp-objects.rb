@@ -56,7 +56,7 @@ module RbScheme
 
     def each
       list = self
-      until list.type == Type::NIL
+      until LNil === list
         yield(list.car)
         list = list.cdr
       end
@@ -73,8 +73,8 @@ module RbScheme
     def list?
       cdr = @cdr
       loop do
-        return true if cdr.type == Type::NIL
-        return false if cdr.type != Type::CELL
+        return true if LNil === cdr
+        return false unless LCell === cdr
         cdr = cdr.cdr
       end
     end
