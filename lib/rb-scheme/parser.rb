@@ -19,8 +19,8 @@ module RbScheme
     end
 
     def reverse_list(list)
-      return LNil if list.type == Type::NIL
-      list.reduce(LNil) { |res, e| cons(e, res) }
+      return LNil.instance if list.type == Type::NIL
+      list.reduce(LNil.instance) { |res, e| cons(e, res) }
     end
 
     def skip_line
@@ -37,7 +37,7 @@ module RbScheme
     end
 
     def read_list
-      acc = LNil
+      acc = LNil.instance
       loop do
         obj = read_expr
         raise "read_list: Unclosed parenthesis" if obj.nil?
@@ -64,7 +64,7 @@ module RbScheme
 
     def read_quote
       sym = intern("quote")
-      cons(sym, cons(read_expr, LNil))
+      cons(sym, cons(read_expr, LNil.instance))
     end
 
     def read_number(value)
@@ -79,9 +79,9 @@ module RbScheme
       c = getc
       case c
       when 't'
-        LTrue
+        LTrue.instance
       when 'f'
-        LFalse
+        LFalse.instance
       else
         raise "Unexpected hash literal #{c}"
       end
@@ -118,9 +118,9 @@ module RbScheme
         when '('
           return read_list
         when ')'
-          return LCloseParen
+          return LCloseParen.instance
         when '.'
-          return LDot
+          return LDot.instance
         when '\''
           return read_quote
         when /\d/

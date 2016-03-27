@@ -1,3 +1,5 @@
+require 'singleton'
+
 module RbScheme
   module Type
     INT = 1
@@ -92,22 +94,27 @@ module RbScheme
 
   class LDot
     include Type
+    include Singleton
   end
 
   class LCloseParen
     include Type
+    include Singleton
   end
 
   class LNil
     include Type
+    include Singleton
   end
 
   class LTrue
     include Type
+    include Singleton
   end
 
   class LFalse
     include Type
+    include Singleton
   end
 
   class LSyntax

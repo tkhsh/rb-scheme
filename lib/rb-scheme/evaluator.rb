@@ -13,7 +13,7 @@ module RbScheme
     end
 
     def map_eval(lst, env)
-      return LNil unless lst.type == Type::CELL && lst.list?
+      return LNil.instance unless lst.type == Type::CELL && lst.list?
       result_array = lst.map { |e| eval(e, env) }
       array_to_list(result_array)
     end
@@ -23,7 +23,7 @@ module RbScheme
     end
 
     def extend_env(env, vars, vals)
-      frame = LNil
+      frame = LNil.instance
       vars.to_a.zip(vals.to_a) do |var, val|
         frame = acons(var, val, frame)
       end

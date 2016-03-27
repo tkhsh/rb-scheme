@@ -9,7 +9,7 @@ module RbScheme
     def_delegator :@printer, :print
 
     def init_env
-      cons(LNil, LNil)
+      cons(LNil.instance, LNil.instance)
     end
 
     def self.run

@@ -43,7 +43,7 @@ module RbScheme
         body = form.cadr
         raise "define - value must be bound to Symbol" unless sym.type == Type::SYMBOL
         add_variable!(env, sym, eval(body, env))
-        LNil
+        LNil.instance
       end
     end
 
@@ -54,7 +54,7 @@ module RbScheme
         body = form.cadr
         raise "define-macro - value must be bound to Symbol" unless sym.type == Type::SYMBOL
         add_variable!(env, sym, LMacro.new(sym.name, eval(body, env)))
-        LNil
+        LNil.instance
       end
     end
 
@@ -134,7 +134,7 @@ module RbScheme
       lambda do |args, env|
         raise "Malformed list?" unless args.count == 1
         fst = args.car
-        return LFalse unless fst.type == Type::CELL
+        return LFalse.instance unless fst.type == Type::CELL
         boolean(fst.list?)
       end
     end
@@ -143,8 +143,8 @@ module RbScheme
       lambda do |args, env|
         raise "Malformed pair?" unless args.count == 1
         fst = args.car
-        return LFalse unless fst.type == Type::CELL
-        LTrue
+        return LFalse.instance unless fst.type == Type::CELL
+        LTrue.instance
       end
     end
 
@@ -215,7 +215,7 @@ module RbScheme
       lambda do |args, env|
         args.each { |i| print(eval(i, env)) }
         puts
-        LNil
+        LNil.instance
       end
     end
 

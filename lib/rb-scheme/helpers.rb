@@ -10,7 +10,7 @@ module RbScheme
     end
 
     def array_to_list(array)
-      result = LNil
+      result = LNil.instance
       array.reverse_each do |e|
         result = cons(e, result)
       end
@@ -18,7 +18,7 @@ module RbScheme
     end
 
     def boolean(value)
-      value ? LTrue : LFalse
+      value ? LTrue.instance : LFalse.instance
     end
   end
 end # RbScheme
