@@ -37,8 +37,7 @@ module RbScheme
 
     def eval(obj, env)
       case obj.type
-      when Type::INT,  Type::PRIMITIVE, Type::FUNCTION,
-           Type::TRUE, Type::FALSE, Type::NIL
+      when Type::INT, Type::TRUE, Type::FALSE, Type::NIL
         obj
       when Type::SYMBOL
         lookup_variable(obj, env).cdr

@@ -10,8 +10,6 @@ module RbScheme
     NIL = 6
     TRUE = 7
     FALSE = 8
-    PRIMITIVE = 9
-    FUNCTION = 10
     SYNTAX = 11
     SUBROUTINE = 12
     LAMBDA = 13
