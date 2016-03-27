@@ -7,5 +7,6 @@ require 'rb-scheme/parser'
 require 'rb-scheme/printer'
 require 'rb-scheme/evaluator'
 require 'rb-scheme/primitive'
+require 'rb-scheme/compiler'
 require 'rb-scheme/executer'
 
