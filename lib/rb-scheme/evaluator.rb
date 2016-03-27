@@ -58,10 +58,10 @@ module RbScheme
           expanded = apply(fst.form, obj.cdr, env)
           eval(expanded, env)
         else
-          raise "application - unexpected type #{fst.type}"
+          raise "application - unexpected type #{fst}"
         end
       else
-        raise "Unexpected type - #{obj.type}"
+        raise "Unexpected type - #{obj}"
       end
     end
 
