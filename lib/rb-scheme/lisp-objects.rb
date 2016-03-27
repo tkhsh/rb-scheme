@@ -1,41 +1,7 @@
 require 'singleton'
 
 module RbScheme
-  module Type
-    INT = 1
-    CELL = 2
-    SYMBOL = 3
-    DOT = 4
-    CLOSEPAREN = 5
-    NIL = 6
-    TRUE = 7
-    FALSE = 8
-    SYNTAX = 11
-    SUBROUTINE = 12
-    LAMBDA = 13
-    MACRO = 14
-
-    def self.included(base)
-      # Example
-      #   base.name => RbScheme::LInt
-      #   type_name => INT
-      type_name = base.name.split('::').last[1..-1].upcase
-
-      base.class_eval %Q{
-        def self.type
-          #{const_get(type_name)}
-        end
-
-        def type
-          self.class.type
-        end
-      }
-    end
-  end # Type
-
   class LInt
-    include Type
-
     attr_accessor :value
 
     def initialize(value)
@@ -44,7 +10,6 @@ module RbScheme
   end
 
   class LCell
-    include Type
     include Enumerable
 
     attr_accessor :car, :cdr
@@ -81,8 +46,6 @@ module RbScheme
   end
 
   class LSymbol
-    include Type
-
     attr_accessor :name
 
     def initialize(name)
@@ -91,33 +54,26 @@ module RbScheme
   end
 
   class LDot
-    include Type
     include Singleton
   end
 
   class LCloseParen
-    include Type
     include Singleton
   end
 
   class LNil
-    include Type
     include Singleton
   end
 
   class LTrue
-    include Type
     include Singleton
   end
 
   class LFalse
-    include Type
     include Singleton
   end
 
   class LSyntax
-    include Type
-
     attr_accessor :name, :syntax
 
     def initialize(name, syntax)
@@ -127,8 +83,6 @@ module RbScheme
   end
 
   class LSubroutine
-    include Type
-
     attr_accessor :name, :subr
 
     def initialize(name, subr)
@@ -138,8 +92,6 @@ module RbScheme
   end
 
   class LLambda
-    include Type
-
     attr_accessor :params, :body, :env
 
     def initialize(params, body, env)
@@ -150,8 +102,6 @@ module RbScheme
   end
 
   class LMacro
-    include Type
-
     attr_accessor :name, :form
 
     def initialize(name, form)
