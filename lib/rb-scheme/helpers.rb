@@ -9,6 +9,10 @@ module RbScheme
       cons(cons(key, val), cdr)
     end
 
+    def list(*args)
+      array_to_list(args)
+    end
+
     def array_to_list(array)
       result = LNil.instance
       array.reverse_each do |e|
