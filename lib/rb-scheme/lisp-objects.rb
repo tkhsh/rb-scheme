@@ -35,6 +35,10 @@ module RbScheme
       @cdr.cdr.car
     end
 
+    def cadddr
+      @cdr.cdr.cdr.car
+    end
+
     def list?
       cdr = @cdr
       loop do
