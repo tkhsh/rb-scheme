@@ -8,5 +8,6 @@ require 'rb-scheme/printer'
 require 'rb-scheme/evaluator'
 require 'rb-scheme/primitive'
 require 'rb-scheme/compiler'
+require 'rb-scheme/vm'
 require 'rb-scheme/executer'
 
