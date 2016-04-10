@@ -6,10 +6,14 @@ module RbScheme
 
     def_delegators :@evaluator, :eval, :lookup_variable
     def_delegator :@printer, :print
+    def_delegator :@compiler, :compile
+    def_delegator :@vm, :exec, :vm_exec
 
     def initialize
       @evaluator = Evaluator.new
       @printer = Printer.new
+      @compiler = Compiler.new
+      @vm = VM.new
     end
 
     def syntax_lambda
@@ -89,6 +93,16 @@ module RbScheme
         last = LInt.new(0)
         form.each { |e| last = eval(e, env) } unless LNil === form
         last
+      end
+    end
+
+    def syntax_vm_eval
+      lambda do |form, env|
+        vm_exec(list,
+                compile(form.car, list(intern("halt"))),
+                env,
+                list,
+                list)
       end
     end
 
@@ -231,6 +245,7 @@ module RbScheme
       add_syntax!(env, "if", syntax_if)
       add_syntax!(env, "set!", syntax_set!)
       add_syntax!(env, "begin", syntax_begin)
+      add_syntax!(env, "vm_eval", syntax_vm_eval)
       add_subrutine!(env, "cons", subr_cons)
       add_subrutine!(env, "car", subr_car)
       add_subrutine!(env, "cdr", subr_cdr)
