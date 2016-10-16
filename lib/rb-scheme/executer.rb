@@ -35,6 +35,10 @@ module RbScheme
       env = init_env
       add_primitive!(env)
 
+      exec_repl(env)
+    end
+
+    def exec_repl(env)
       loop do
         print "> "
         expr = read_expr
