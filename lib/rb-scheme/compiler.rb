@@ -3,10 +3,10 @@ module RbScheme
     include Helpers
     include Symbol
 
-    def compile(x, nxt)
+    def compile(x, env, nxt)
       case x
       when LSymbol
-        list(intern("refer"), x, nxt)
+        list(intern("refer"), compile_lookup(x, env), nxt)
       when LCell
         case x.car
         when intern("quote")
@@ -16,31 +16,32 @@ module RbScheme
         when intern("lambda")
           vars, body = x.cdr.to_a
 
-          bodyc = compile(body, list(intern("return")))
-          list(intern("close"), vars, bodyc, nxt)
+          bodyc = compile(body, extend_env(env, vars), list(intern("return")))
+          list(intern("close"), bodyc, nxt)
         when intern("if")
           test, then_exp, else_exp = x.cdr.to_a
 
-          thenc = compile(then_exp, nxt)
-          elsec = compile(else_exp, nxt)
-          compile(test, list(intern("test"), thenc, elsec))
+          thenc = compile(then_exp, env, nxt)
+          elsec = compile(else_exp, env, nxt)
+          compile(test, env, list(intern("test"), thenc, elsec))
         when intern("set!")
           var, val = x.cdr.to_a
 
-          compile(val, list(intern("assign"), var, nxt))
+          access = compile_lookup(var, env)
+          compile(val, env, list(intern("assign"), access, nxt))
         when intern("call/cc")
           exp = x.cadr
 
           c = list(intern("conti"),
                    list(intern("argument"),
-                        compile(exp, list(intern("apply")))))
+                        compile(exp, env, list(intern("apply")))))
           tail?(nxt) ? c : list(intern("frame"), nxt, c)
         else
           args = x.cdr
-          c = compile(x.car, list(intern("apply")))
+          c = compile(x.car, env, list(intern("apply")))
 
           args.each do |arg|
-            c = compile(arg, list(intern("argument"), c))
+            c = compile(arg, env, list(intern("argument"), c))
           end
           tail?(nxt) ? c : list(intern("frame"), nxt, c)
         end

@@ -19,9 +19,9 @@ module RbScheme
           acc = obj
           nxt = x
         when intern("close")
-          vars, body, x = nxt.cdr.to_a
+          body, x = nxt.cdr.to_a
 
-          acc = closure(body, env, vars)
+          acc = closure(body, env)
           nxt = x
         when intern("test")
           thenx, elsex = nxt.cdr.to_a
@@ -55,10 +55,10 @@ module RbScheme
           nxt = x
           rib = cons(acc, rib)
         when intern("apply")
-          cls_body, cls_env, cls_vars = acc.to_a
+          cls_body, cls_env = acc.to_a
 
           nxt = cls_body
-          env = extend_env(cls_env, cls_vars, rib)
+          env = extend_env(cls_env, rib)
           rib = list
         when intern("return")
           s_nxt, s_env, s_rib, s_stack = stack.to_a
@@ -73,36 +73,35 @@ module RbScheme
       end
     end
 
-    def lookup(var, env)
-      env.each do |rib|
-        rib.car.each_with_index do |e_var, i|
-          if e_var.equal?(var)
-            vals = rib.cdr
-            i.times { vals = vals.cdr }
-            return vals
+    def lookup(access, env)
+      env.each_with_index do |rib, rib_idx|
+        if rib_idx == access.car
+          vals = rib
+
+          access.cdr.times do
+            vals = vals.cdr
           end
+
+          return vals
         end
       end
-
-      raise "Unbound variable - #{var.name}"
     end
 
-    def closure(body, env, vars)
-      list(body, env, vars)
+    def closure(body, env)
+      list(body, env)
     end
 
     def continuation(current_stack)
-      closure(list(intern("nuate"), current_stack, intern("v")),
-              list,
-              list(intern("v")))
+      closure(list(intern("nuate"), current_stack, cons(0, 0)),
+              list)
     end
 
     def call_frame(nxt, env, rib, stack)
       list(nxt, env, rib, stack)
     end
 
-    def extend_env(env, vars, vals)
-      acons(vars, vals, env)
+    def extend_env(env, vals)
+      cons(vals, env)
     end
 
   end # VM

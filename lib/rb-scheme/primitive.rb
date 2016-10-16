@@ -99,7 +99,7 @@ module RbScheme
     def syntax_vm_eval
       lambda do |form, env|
         vm_exec(list,
-                compile(form.car, list(intern("halt"))),
+                compile(form.car, list, list(intern("halt"))),
                 list,
                 list,
                 list)
