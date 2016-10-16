@@ -57,5 +57,13 @@ module RbScheme
       cons(var_rib, env)
     end
 
+    def compile_lookup(var, env)
+      env.each_with_index do |rib, i|
+        rib.each_with_index do |elt, j|
+          return cons(i, j) if elt.equal?(var)
+        end
+      end
+    end
+
   end # Compiler
 end # RbScheme
