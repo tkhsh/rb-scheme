@@ -4,7 +4,7 @@ class TestExecuter < Minitest::Test
   include RbScheme
 
   def setup
-    @executer = Executer.new
+    @executer = Executer.new(STDIN)
     @env = @executer.init_env
     @executer.add_primitive!(@env)
   end
