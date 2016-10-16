@@ -53,5 +53,9 @@ module RbScheme
       nxt.car == intern("return")
     end
 
+    def extend_env(env, var_rib)
+      cons(var_rib, env)
+    end
+
   end # Compiler
 end # RbScheme
