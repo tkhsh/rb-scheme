@@ -74,9 +74,13 @@ module RbScheme
     end
 
     def lookup(var, env)
-      env.each do |frame|
-        frame.each do |bind|
-          return bind if bind.car.equal? var
+      env.each do |rib|
+        rib.car.each_with_index do |e_var, i|
+          if e_var.equal?(var)
+            vals = rib.cdr
+            i.times { vals = vals.cdr }
+            return vals
+          end
         end
       end
 
@@ -98,11 +102,7 @@ module RbScheme
     end
 
     def extend_env(env, vars, vals)
-      frame = LNil.instance
-      vars.to_a.zip(vals.to_a) do |var, val|
-        frame = acons(var, val, frame)
-      end
-      cons(frame, env)
+      acons(vars, vals, env)
     end
 
   end # VM
