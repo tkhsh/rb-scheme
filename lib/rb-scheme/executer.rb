@@ -12,11 +12,11 @@ module RbScheme
       cons(LNil.instance, LNil.instance)
     end
 
-    def self.run
-      new.exec
+    def self.run(source)
+      new(source).exec
     end
 
-    def initialize(source = STDIN)
+    def initialize(source)
       set_source!(source)
       @primitive = Primitive.new
       @evaluator = Evaluator.new
@@ -24,6 +24,7 @@ module RbScheme
     end
 
     def set_source!(source)
+      @source = source
       @parser = Parser.new(source)
     end
 
@@ -35,7 +36,21 @@ module RbScheme
       env = init_env
       add_primitive!(env)
 
-      exec_repl(env)
+      if File.file?(@source)
+        exec_file(env)
+      else
+        exec_repl(env)
+      end
+    end
+
+    def exec_file(env)
+      result = nil
+      loop do
+        expr = read_expr
+        break if expr.nil?
+        result = eval(expr, env)
+      end
+      print_lisp_object(result)
     end
 
     def exec_repl(env)

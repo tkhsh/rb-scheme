@@ -5,4 +5,4 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'rb-scheme'
 
-RbScheme::Executer.run
+RbScheme::Executer.run(ARGF.file)
