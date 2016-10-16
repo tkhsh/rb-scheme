@@ -27,6 +27,10 @@ module RbScheme
       @parser = Parser.new(source)
     end
 
+    def exit?(expr)
+      expr.is_a?(LSymbol) && expr.name == "exit"
+    end
+
     def exec
       env = init_env
       add_primitive!(env)
@@ -35,6 +39,7 @@ module RbScheme
         print "> "
         expr = read_expr
         return if expr.nil?
+        return if exit?(expr)
         print_lisp_object(eval(expr, env))
       end
     end
