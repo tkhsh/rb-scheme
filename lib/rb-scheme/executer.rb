@@ -32,6 +32,7 @@ module RbScheme
       add_primitive!(env)
 
       loop do
+        print "> "
         expr = read_expr
         return if expr.nil?
         print_lisp_object(eval(expr, env))
