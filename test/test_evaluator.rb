@@ -94,6 +94,24 @@ class TestExecuter < Minitest::Test
       result = eval_next(@env)
       assert_instance_of LNil, result
     end
+
+    # syntax_vm_eval
+    vm_eval_exprs = <<-EXPRS
+    ((lambda (x) x) 1)
+    ((lambda (a b) ((lambda (x y) x) b 3)) 4 5)
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      result1 = eval_next(@env)
+      assert_instance_of LInt, result1
+      assert_equal 1, result1.value
+
+      result2 = eval_next(@env)
+      assert_instance_of LInt, result2
+      assert_equal 5, result2.value
+    end
+
   end
 end
 
