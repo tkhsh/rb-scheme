@@ -6,7 +6,7 @@ module RbScheme
     def_delegator :@parser, :read_expr
     def_delegator :@primitive, :add_primitive!
     def_delegator :@evaluator, :eval
-    def_delegator :@printer, :print
+    def_delegator :@printer, :print, :print_lisp_object
 
     def init_env
       cons(LNil.instance, LNil.instance)
@@ -34,7 +34,7 @@ module RbScheme
       loop do
         expr = read_expr
         return if expr.nil?
-        print(eval(expr, env))
+        print_lisp_object(eval(expr, env))
       end
     end
   end # Executer
