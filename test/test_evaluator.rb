@@ -97,8 +97,8 @@ class TestExecuter < Minitest::Test
 
     # syntax_vm_eval
     vm_eval_exprs = <<-EXPRS
-    ((lambda (x) x) 1)
-    ((lambda (a b) ((lambda (x y) x) b 3)) 4 5)
+    (vm_eval ((lambda (x) x) 1))
+    (vm_eval ((lambda (a b) ((lambda (x y) x) b 3)) 4 5))
     EXPRS
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
