@@ -6,7 +6,9 @@ module RbScheme
     def compile(x, env, nxt)
       case x
       when LSymbol
-        list(intern("refer"), compile_lookup(x, env), nxt)
+        list(intern("refer"),
+             compile_lookup(x, env, lambda { |n, m| cons(n, m) }),
+             nxt)
       when LCell
         case x.car
         when intern("quote")
@@ -31,7 +33,7 @@ module RbScheme
           check_length!(x.cdr, 2, "set!")
           var, val = x.cdr.to_a
 
-          access = compile_lookup(var, env)
+          access = compile_lookup(var, env, lambda { |n, m| cons(n, m) })
           compile(val, env, list(intern("assign"), access, nxt))
         when intern("call/cc")
           check_length!(x.cdr, 1, "call/cc")
@@ -63,10 +65,10 @@ module RbScheme
       cons(var_rib, env)
     end
 
-    def compile_lookup(var, env)
+    def compile_lookup(var, env, ret)
       env.each_with_index do |rib, i|
         rib.each_with_index do |elt, j|
-          return cons(i, j) if elt.equal?(var)
+          return ret.call(i, j) if elt.equal?(var)
         end
       end
     end
