@@ -116,6 +116,9 @@ module RbScheme
       cons(vals, env)
     end
 
+    def stack
+      @stack ||= Array.new(1000)
+    end
   end # VM
 end # RbScheme
 
