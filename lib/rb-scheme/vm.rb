@@ -134,6 +134,16 @@ module RbScheme
     def index_set!(stack_p, i, val)
       stack[stack_p - (i + OFFSET)] = val
     end
+
+    def save_stack(stack_p)
+      v = Array.new(stack_p)
+      i = 0
+      until i == stack_p
+        v[i] = stack[i]
+        i += 1
+      end
+      v
+    end
   end # VM
 end # RbScheme
 
