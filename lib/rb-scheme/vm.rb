@@ -119,6 +119,11 @@ module RbScheme
     def stack
       @stack ||= Array.new(1000)
     end
+
+    def push(val, stack_p)
+      stack[stack_p] = val
+      stack_p + 1
+    end
   end # VM
 end # RbScheme
 
