@@ -130,6 +130,10 @@ module RbScheme
     def index(stack_p, i)
       stack[stack_p - (i + OFFSET)]
     end
+
+    def index_set!(stack_p, i, val)
+      stack[stack_p - (i + OFFSET)] = val
+    end
   end # VM
 end # RbScheme
 
