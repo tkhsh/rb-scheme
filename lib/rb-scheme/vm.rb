@@ -124,6 +124,12 @@ module RbScheme
       stack[stack_p] = val
       stack_p + 1
     end
+
+    OFFSET = 1
+
+    def index(stack_p, i)
+      stack[stack_p - (i + OFFSET)]
+    end
   end # VM
 end # RbScheme
 
