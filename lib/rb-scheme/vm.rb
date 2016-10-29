@@ -144,6 +144,16 @@ module RbScheme
       end
       v
     end
+
+    def restore_stack(saved_stack)
+      s = saved_stack.length
+      i = 0
+      until i == s do
+        stack[i] = saved_stack[i]
+        i += 1
+      end
+      s
+    end
   end # VM
 end # RbScheme
 
