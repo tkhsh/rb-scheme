@@ -24,5 +24,12 @@ module RbScheme
     def boolean(value)
       value ? LTrue.instance : LFalse.instance
     end
+
+    def check_length!(lst, n, name)
+      c = lst.count
+      unless c == n
+        raise ArgumentError, "#{name}: wrong number of arguments(#{c} for #{n})"
+      end
+    end
   end
 end # RbScheme
