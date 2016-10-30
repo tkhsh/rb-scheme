@@ -10,10 +10,10 @@ module RbScheme
           check_length!(nxt.cdr, 0, "halt")
           return acc
         when intern("refer")
-          var, x = nxt.cdr.to_a
-          check_length!(nxt.cdr, 2, "refer")
+          check_length!(nxt.cdr, 3, "refer")
+          n, m, x = nxt.cdr.to_a
 
-          acc = lookup(var, env).car
+          acc = lookup(n, m, env).car
           nxt = x
         when intern("constant")
           check_length!(nxt.cdr, 2, "constant")
@@ -33,10 +33,10 @@ module RbScheme
 
           nxt = acc ? thenx : elsex
         when intern("assign")
-          var, x = nxt.cdr.to_a
-          check_length!(nxt.cdr, 2, "assign")
+          check_length!(nxt.cdr, 3, "assign")
+          n, m, x = nxt.cdr.to_a
 
-          lookup(var, env).car = acc
+          lookup(n, m, env).car = acc
           nxt = x
         when intern("conti")
           check_length!(nxt.cdr, 1, "conti")
@@ -45,10 +45,10 @@ module RbScheme
           acc = continuation(stack)
           nxt = x
         when intern("nuate")
-          s, var = nxt.cdr.to_a
-          check_length!(nxt.cdr, 2, "nuate")
+          check_length!(nxt.cdr, 3, "nuate")
+          s, n, m = nxt.cdr.to_a
 
-          acc = lookup(var, env).car
+          acc = lookup(n, m, env).car
           nxt = list(intern("return"))
           stack = s
         when intern("frame")
@@ -85,12 +85,12 @@ module RbScheme
       end
     end
 
-    def lookup(access, env)
+    def lookup(n, m, env)
       env.each_with_index do |rib, rib_idx|
-        if rib_idx == access.car
+        if rib_idx == n
           vals = rib
 
-          access.cdr.times do
+          m.times do
             vals = vals.cdr
           end
 
@@ -104,7 +104,7 @@ module RbScheme
     end
 
     def continuation(current_stack)
-      closure(list(intern("nuate"), current_stack, cons(0, 0)),
+      closure(list(intern("nuate"), current_stack, 0, 0),
               list)
     end
 

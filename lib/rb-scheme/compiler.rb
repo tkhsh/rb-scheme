@@ -6,9 +6,9 @@ module RbScheme
     def compile(x, env, nxt)
       case x
       when LSymbol
-        list(intern("refer"),
-             compile_lookup(x, env, lambda { |n, m| cons(n, m) }),
-             nxt)
+        compile_lookup(x,
+                       env,
+                       lambda { |n, m| list(intern("refer"), n, m, nxt) })
       when LCell
         case x.car
         when intern("quote")
@@ -31,10 +31,12 @@ module RbScheme
           compile(test, env, list(intern("test"), thenc, elsec))
         when intern("set!")
           check_length!(x.cdr, 2, "set!")
-          var, val = x.cdr.to_a
+          var, val_exp = x.cdr.to_a
 
-          access = compile_lookup(var, env, lambda { |n, m| cons(n, m) })
-          compile(val, env, list(intern("assign"), access, nxt))
+          ret = lambda do |n, m|
+                  compile(val_exp, env, list(intern("assign"), n, m, nxt))
+                end
+          compile_lookup(var, env, ret)
         when intern("call/cc")
           check_length!(x.cdr, 1, "call/cc")
           exp = x.cadr
