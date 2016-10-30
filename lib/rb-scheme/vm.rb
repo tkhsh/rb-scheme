@@ -3,84 +3,84 @@ module RbScheme
     include Helpers
     include Symbol
 
-    def exec(acc, nxt, env, rib, stack)
+    def exec(acc, exp, env, rib, stack)
       loop do
-        case nxt.car
+        case exp.car
         when intern("halt")
-          check_length!(nxt.cdr, 0, "halt")
+          check_length!(exp.cdr, 0, "halt")
           return acc
         when intern("refer")
-          check_length!(nxt.cdr, 3, "refer")
-          n, m, x = nxt.cdr.to_a
+          check_length!(exp.cdr, 3, "refer")
+          n, m, x = exp.cdr.to_a
 
           acc = lookup(n, m, env).car
-          nxt = x
+          exp = x
         when intern("constant")
-          check_length!(nxt.cdr, 2, "constant")
-          obj, x = nxt.cdr.to_a
+          check_length!(exp.cdr, 2, "constant")
+          obj, x = exp.cdr.to_a
 
           acc = obj
-          nxt = x
+          exp = x
         when intern("close")
-          check_length!(nxt.cdr, 2, "close")
-          body, x = nxt.cdr.to_a
+          check_length!(exp.cdr, 2, "close")
+          body, x = exp.cdr.to_a
 
           acc = closure(body, env)
-          nxt = x
+          exp = x
         when intern("test")
-          check_length!(nxt.cdr, 2, "test")
-          thenx, elsex = nxt.cdr.to_a
+          check_length!(exp.cdr, 2, "test")
+          thenx, elsex = exp.cdr.to_a
 
-          nxt = acc ? thenx : elsex
+          exp = acc ? thenx : elsex
         when intern("assign")
-          check_length!(nxt.cdr, 3, "assign")
-          n, m, x = nxt.cdr.to_a
+          check_length!(exp.cdr, 3, "assign")
+          n, m, x = exp.cdr.to_a
 
           lookup(n, m, env).car = acc
-          nxt = x
+          exp = x
         when intern("conti")
-          check_length!(nxt.cdr, 1, "conti")
-          x = nxt.cadr
+          check_length!(exp.cdr, 1, "conti")
+          x = exp.cadr
 
           acc = continuation(stack)
-          nxt = x
+          exp = x
         when intern("nuate")
-          check_length!(nxt.cdr, 3, "nuate")
-          s, n, m = nxt.cdr.to_a
+          check_length!(exp.cdr, 3, "nuate")
+          s, n, m = exp.cdr.to_a
 
           acc = lookup(n, m, env).car
-          nxt = list(intern("return"))
+          exp = list(intern("return"))
           stack = s
         when intern("frame")
-          check_length!(nxt.cdr, 2, "frame")
-          ret, x = nxt.cdr.to_a
+          check_length!(exp.cdr, 2, "frame")
+          ret, x = exp.cdr.to_a
 
-          nxt = x
+          exp = x
           stack = call_frame(ret, env, rib, stack)
           rib = list
         when intern("argument")
-          check_length!(nxt.cdr, 1, "argument")
-          x = nxt.cadr
+          check_length!(exp.cdr, 1, "argument")
+          x = exp.cadr
 
-          nxt = x
+          exp = x
           rib = cons(acc, rib)
         when intern("apply")
-          check_length!(nxt.cdr, 0, "apply")
+          check_length!(exp.cdr, 0, "apply")
           cls_body, cls_env = acc.to_a
 
-          nxt = cls_body
+          exp = cls_body
           env = extend_env(cls_env, rib)
           rib = list
         when intern("return")
-          check_length!(nxt.cdr, 0, "return")
-          s_nxt, s_env, s_rib, s_stack = stack.to_a
+          check_length!(exp.cdr, 0, "return")
+          s_exp, s_env, s_rib, s_stack = stack.to_a
 
-          nxt = s_nxt
+          exp = s_exp
           env = s_env
           rib = s_rib
           stack = s_stack
         else
-          raise "Unknown instruction - #{nxt.car}"
+          raise "Unknown instruction - #{exp.car}"
         end
       end
     end
@@ -108,8 +108,8 @@ module RbScheme
               list)
     end
 
-    def call_frame(nxt, env, rib, stack)
-      list(nxt, env, rib, stack)
+    def call_frame(exp, env, rib, stack)
+      list(exp, env, rib, stack)
     end
 
     def extend_env(env, vals)
