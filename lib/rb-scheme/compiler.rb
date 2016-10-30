@@ -10,26 +10,31 @@ module RbScheme
       when LCell
         case x.car
         when intern("quote")
+          check_length!(x.cdr, 1, "quote")
           obj = x.cadr
 
           list(intern("constant"), obj, nxt)
         when intern("lambda")
+          check_length!(x.cdr, 2, "lambda")
           vars, body = x.cdr.to_a
 
           bodyc = compile(body, extend_env(env, vars), list(intern("return")))
           list(intern("close"), bodyc, nxt)
         when intern("if")
+          check_length!(x.cdr, 3, "if")
           test, then_exp, else_exp = x.cdr.to_a
 
           thenc = compile(then_exp, env, nxt)
           elsec = compile(else_exp, env, nxt)
           compile(test, env, list(intern("test"), thenc, elsec))
         when intern("set!")
+          check_length!(x.cdr, 2, "set!")
           var, val = x.cdr.to_a
 
           access = compile_lookup(var, env)
           compile(val, env, list(intern("assign"), access, nxt))
         when intern("call/cc")
+          check_length!(x.cdr, 1, "call/cc")
           exp = x.cadr
 
           c = list(intern("conti"),
