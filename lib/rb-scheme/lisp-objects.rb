@@ -70,6 +70,7 @@ module RbScheme
     include Enumerable
 
     def each; end
+    def list?; true; end
   end
 
   class LTrue
