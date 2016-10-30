@@ -67,6 +67,9 @@ module RbScheme
 
   class LNil
     include Singleton
+    include Enumerable
+
+    def each; end
   end
 
   class LTrue
