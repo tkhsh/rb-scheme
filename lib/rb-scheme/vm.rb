@@ -7,60 +7,72 @@ module RbScheme
       loop do
         case nxt.car
         when intern("halt")
+          check_length!(nxt.cdr, 0, "halt")
           return acc
         when intern("refer")
           var, x = nxt.cdr.to_a
+          check_length!(nxt.cdr, 2, "refer")
 
           acc = lookup(var, env).car
           nxt = x
         when intern("constant")
+          check_length!(nxt.cdr, 2, "constant")
           obj, x = nxt.cdr.to_a
 
           acc = obj
           nxt = x
         when intern("close")
+          check_length!(nxt.cdr, 2, "close")
           body, x = nxt.cdr.to_a
 
           acc = closure(body, env)
           nxt = x
         when intern("test")
+          check_length!(nxt.cdr, 2, "test")
           thenx, elsex = nxt.cdr.to_a
 
           nxt = acc ? thenx : elsex
         when intern("assign")
           var, x = nxt.cdr.to_a
+          check_length!(nxt.cdr, 2, "assign")
 
           lookup(var, env).car = acc
           nxt = x
         when intern("conti")
+          check_length!(nxt.cdr, 1, "conti")
           x = nxt.cadr
 
           acc = continuation(stack)
           nxt = x
         when intern("nuate")
           s, var = nxt.cdr.to_a
+          check_length!(nxt.cdr, 2, "nuate")
 
           acc = lookup(var, env).car
           nxt = list(intern("return"))
           stack = s
         when intern("frame")
+          check_length!(nxt.cdr, 2, "frame")
           ret, x = nxt.cdr.to_a
 
           nxt = x
           stack = call_frame(ret, env, rib, stack)
           rib = list
         when intern("argument")
+          check_length!(nxt.cdr, 1, "argument")
           x = nxt.cadr
 
           nxt = x
           rib = cons(acc, rib)
         when intern("apply")
+          check_length!(nxt.cdr, 0, "apply")
           cls_body, cls_env = acc.to_a
 
           nxt = cls_body
           env = extend_env(cls_env, rib)
           rib = list
         when intern("return")
+          check_length!(nxt.cdr, 0, "return")
           s_nxt, s_env, s_rib, s_stack = stack.to_a
 
           nxt = s_nxt
