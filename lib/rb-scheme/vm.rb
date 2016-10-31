@@ -45,18 +45,17 @@ module RbScheme
           acc = continuation(stack)
           exp = x
         when intern("nuate")
-          check_length!(exp.cdr, 3, "nuate")
-          s, n, m = exp.cdr.to_a
+          check_length!(exp.cdr, 2, "nuate")
+          p, x = exp.cdr.to_a
 
-          acc = lookup(n, m, env).car
-          exp = list(intern("return"))
-          stack = s
+          exp = x
+          stack = restore_stack(p)
         when intern("frame")
           check_length!(exp.cdr, 2, "frame")
           ret, x = exp.cdr.to_a
 
           exp = x
-          stack = call_frame(ret, env, rib, stack)
+          stack = push(ret, push(env, push(rib, stack)))
           rib = list
         when intern("argument")
           check_length!(exp.cdr, 1, "argument")
@@ -73,12 +72,11 @@ module RbScheme
           rib = list
         when intern("return")
           check_length!(exp.cdr, 0, "return")
-          s_exp, s_env, s_rib, s_stack = stack.to_a
 
-          exp = s_exp
-          env = s_env
-          rib = s_rib
-          stack = s_stack
+          exp = index(stack, 0)
+          env = index(stack, 1)
+          rib = index(stack, 2)
+          stack = stack - 3
         else
           raise "Unknown instruction - #{exp.car}"
         end
@@ -103,9 +101,14 @@ module RbScheme
       list(body, env)
     end
 
-    def continuation(current_stack)
-      closure(list(intern("nuate"), current_stack, 0, 0),
-              list)
+    def continuation(stack_p)
+      body = list(intern("refer"),
+                  0,
+                  0,
+                  list(intern("nuate"),
+                       save_stack(stack_p),
+                       list(intern("return"))))
+      closure(body, list)
     end
 
     def call_frame(exp, env, rib, stack)

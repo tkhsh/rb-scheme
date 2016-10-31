@@ -102,7 +102,7 @@ module RbScheme
                 compile(form.car, list, list(intern("halt"))),
                 list,
                 list,
-                list)
+                0)
       end
     end
 
