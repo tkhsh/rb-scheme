@@ -100,11 +100,11 @@ class TestExecuter < Minitest::Test
     (vm_eval ((lambda (x) x) 1))
     (vm_eval ((lambda (a b) ((lambda (x y) x) b 3)) 4 5))
     (vm_eval '(1 2))
-    (vm_eval ((lambda (x) (set! x 10)) 1))
-    (vm_eval ((lambda (x) (if 1 x (set! x 2)))
-              3))
     (vm_eval ((lambda (x) (call/cc (lambda (s) (s 9)))) 4))
     EXPRS
+    # (vm_eval ((lambda (x) (set! x 10)) 1))
+    # (vm_eval ((lambda (x) (if 1 x (set! x 2)))
+    #           3))
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
 
@@ -125,14 +125,14 @@ class TestExecuter < Minitest::Test
       assert_equal 2, result3.cadr.value
 
       # (vm_eval ((lambda (x) (set! x 10) x) 1))
-      result4 = eval_next(@env)
-      assert_equal 10, result4.value
-
-      # (vm_eval ((lambda (x) (if 1 x (set! x 2)) x)
-      #           3))
-      result5 = eval_next(@env)
-      assert_equal 3, result5.value
-
+      # result4 = eval_next(@env)
+      # assert_equal 10, result4.value
+      #
+      # # (vm_eval ((lambda (x) (if 1 x (set! x 2)) x)
+      # #           3))
+      # result5 = eval_next(@env)
+      # assert_equal 3, result5.value
+      #
       # (vm_eval ((lambda (x) (call/cc (lambda (s) 3))) 4))
       result6 = eval_next(@env)
       assert_equal 9, result6.value
