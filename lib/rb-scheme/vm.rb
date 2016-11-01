@@ -3,7 +3,7 @@ module RbScheme
     include Helpers
     include Symbol
 
-    def exec(acc, exp, env, rib, stack)
+    def exec(acc, exp, env, rib, stack_p)
       loop do
         case exp.car
         when intern("halt")
@@ -42,20 +42,20 @@ module RbScheme
           check_length!(exp.cdr, 1, "conti")
           x = exp.cadr
 
-          acc = continuation(stack)
+          acc = continuation(stack_p)
           exp = x
         when intern("nuate")
           check_length!(exp.cdr, 2, "nuate")
           p, x = exp.cdr.to_a
 
           exp = x
-          stack = restore_stack(p)
+          stack_p = restore_stack(p)
         when intern("frame")
           check_length!(exp.cdr, 2, "frame")
           ret, x = exp.cdr.to_a
 
           exp = x
-          stack = push(ret, push(env, push(rib, stack)))
+          stack_p = push(ret, push(env, push(rib, stack_p)))
           rib = list
         when intern("argument")
           check_length!(exp.cdr, 1, "argument")
@@ -73,10 +73,10 @@ module RbScheme
         when intern("return")
           check_length!(exp.cdr, 0, "return")
 
-          exp = index(stack, 0)
-          env = index(stack, 1)
-          rib = index(stack, 2)
-          stack = stack - 3
+          exp = index(stack_p, 0)
+          env = index(stack_p, 1)
+          rib = index(stack_p, 2)
+          stack_p = stack_p - 3
         else
           raise "Unknown instruction - #{exp.car}"
         end
