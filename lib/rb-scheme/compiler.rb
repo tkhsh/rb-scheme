@@ -20,7 +20,9 @@ module RbScheme
           check_length!(x.cdr, 2, "lambda")
           vars, body = x.cdr.to_a
 
-          bodyc = compile(body, extend_env(env, vars), list(intern("return")))
+          bodyc = compile(body,
+                          extend_env(env, vars),
+                          list(intern("return"), vars.count + 1))
           list(intern("close"), bodyc, nxt)
         when intern("if")
           check_length!(x.cdr, 3, "if")
@@ -29,14 +31,6 @@ module RbScheme
           thenc = compile(then_exp, env, nxt)
           elsec = compile(else_exp, env, nxt)
           compile(test, env, list(intern("test"), thenc, elsec))
-        when intern("set!")
-          check_length!(x.cdr, 2, "set!")
-          var, val_exp = x.cdr.to_a
-
-          ret = lambda do |n, m|
-                  compile(val_exp, env, list(intern("assign"), n, m, nxt))
-                end
-          compile_lookup(var, env, ret)
         when intern("call/cc")
           check_length!(x.cdr, 1, "call/cc")
           exp = x.cadr
@@ -44,7 +38,7 @@ module RbScheme
           c = list(intern("conti"),
                    list(intern("argument"),
                         compile(exp, env, list(intern("apply")))))
-          tail?(nxt) ? c : list(intern("frame"), nxt, c)
+          list(intern("frame"), nxt, c)
         else
           args = x.cdr
           c = compile(x.car, env, list(intern("apply")))
@@ -52,7 +46,7 @@ module RbScheme
           args.each do |arg|
             c = compile(arg, env, list(intern("argument"), c))
           end
-          tail?(nxt) ? c : list(intern("frame"), nxt, c)
+          list(intern("frame"), nxt, c)
         end
       else
         list(intern("constant"), x, nxt)

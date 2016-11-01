@@ -13,7 +13,7 @@ module RbScheme
           check_length!(exp.cdr, 3, "refer")
           n, m, x = exp.cdr.to_a
 
-          acc = lookup(n, m, env).car
+          acc = index(find_link(n, env), m)
           exp = x
         when intern("constant")
           check_length!(exp.cdr, 2, "constant")
@@ -32,12 +32,6 @@ module RbScheme
           thenx, elsex = exp.cdr.to_a
 
           exp = acc ? thenx : elsex
-        when intern("assign")
-          check_length!(exp.cdr, 3, "assign")
-          n, m, x = exp.cdr.to_a
-
-          lookup(n, m, env).car = acc
-          exp = x
         when intern("conti")
           check_length!(exp.cdr, 1, "conti")
           x = exp.cadr
@@ -55,28 +49,28 @@ module RbScheme
           ret, x = exp.cdr.to_a
 
           exp = x
-          stack_p = push(ret, push(env, push(rib, stack_p)))
-          rib = list
+          stack_p = push(ret, push(env, stack_p))
         when intern("argument")
           check_length!(exp.cdr, 1, "argument")
           x = exp.cadr
 
           exp = x
-          rib = cons(acc, rib)
+          stack_p = push(acc, stack_p)
         when intern("apply")
           check_length!(exp.cdr, 0, "apply")
-          cls_body, cls_env = acc.to_a
+          cls_body, cls_link = acc.to_a
 
           exp = cls_body
-          env = extend_env(cls_env, rib)
-          rib = list
+          env = stack_p
+          stack_p = push(cls_link, stack_p)
         when intern("return")
-          check_length!(exp.cdr, 0, "return")
+          check_length!(exp.cdr, 1, "return")
+          n = exp.cadr
+          s = stack_p - n
 
-          exp = index(stack_p, 0)
-          env = index(stack_p, 1)
-          rib = index(stack_p, 2)
-          stack_p = stack_p - 3
+          exp = index(s, 0)
+          env = index(s, 1)
+          stack_p = s - 2
         else
           raise "Unknown instruction - #{exp.car}"
         end
@@ -107,7 +101,7 @@ module RbScheme
                   0,
                   list(intern("nuate"),
                        save_stack(stack_p),
-                       list(intern("return"))))
+                       list(intern("return"), 0)))
       closure(body, list)
     end
 
