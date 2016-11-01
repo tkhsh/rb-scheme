@@ -111,10 +111,6 @@ module RbScheme
       closure(body, list)
     end
 
-    def call_frame(exp, env, rib, stack)
-      list(exp, env, rib, stack)
-    end
-
     def extend_env(env, vals)
       cons(vals, env)
     end
