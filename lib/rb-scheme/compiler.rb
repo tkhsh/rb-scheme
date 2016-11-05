@@ -1,3 +1,5 @@
+require 'set'
+
 module RbScheme
   class Compiler
     include Helpers
@@ -66,6 +68,41 @@ module RbScheme
         rib.each_with_index do |elt, j|
           return ret.call(i, j) if elt.equal?(var)
         end
+      end
+    end
+
+    def find_free(exp, bound_variables)
+      case exp
+      when LSymbol
+        bound_variables.member?(intern(exp.name)) ? Set.new : Set.new(list(exp))
+      when LCell
+        case exp.car
+        when intern("quote")
+          Set.new
+        when intern("lambda")
+          check_length!(exp.cdr, 2, "find_free(lambda)")
+          vars, body = exp.cdr.to_a
+
+          find_free(body, bound_variables.union(Set.new(vars)))
+        when intern("if")
+          check_length!(exp.cdr, 3, "find_free(if)")
+          test_x, then_x, else_x = exp.cdr.to_a
+
+          bound_variables.union(find_free(test_x))
+                         .union(find_free(then_x))
+                         .union(find_free(else_x))
+        when intern("call/cc")
+          check_length!(exp.cdr, 1, "find_free(call/cc)")
+          x = exp.cadr
+
+          find_free(x, bound_variables)
+        else
+          exp.inject(Set.new) do |result, item|
+            result.union(find_free(item, bound_variables))
+          end
+        end
+      else
+        Set.new
       end
     end
 
