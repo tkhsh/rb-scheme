@@ -69,6 +69,13 @@ module RbScheme
       end
     end
 
+    def compile_refer(var, env, nxt)
+      compile_lookup(var,
+                     env,
+                     lambda { |n| list(intern("refer-local"), n, nxt) },
+                     lambda { |n| list(intern("refer-free"), n, nxt) })
+    end
+
     def compile_lookup(var, env, return_local, return_free)
       locals = env.car
       locals.each_with_index do |l, n|
