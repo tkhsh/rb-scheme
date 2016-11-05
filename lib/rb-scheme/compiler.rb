@@ -6,9 +6,9 @@ module RbScheme
     def compile(x, env, nxt)
       case x
       when LSymbol
-        compile_lookup(x,
-                       env,
-                       lambda { |n, m| list(intern("refer"), n, m, nxt) })
+        compile_lookup_old(x,
+                           env,
+                           lambda { |n, m| list(intern("refer"), n, m, nxt) })
       when LCell
         case x.car
         when intern("quote")
@@ -61,7 +61,7 @@ module RbScheme
       cons(var_rib, env)
     end
 
-    def compile_lookup(var, env, ret)
+    def compile_lookup_old(var, env, ret)
       env.each_with_index do |rib, i|
         rib.each_with_index do |elt, j|
           return ret.call(i, j) if elt.equal?(var)
