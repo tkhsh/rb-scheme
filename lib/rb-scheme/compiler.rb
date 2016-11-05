@@ -69,5 +69,18 @@ module RbScheme
       end
     end
 
+    def compile_lookup(var, env, return_local, return_free)
+      locals = env.car
+      locals.each_with_index do |l, n|
+        return return_local.call(n) if l == var
+      end
+
+      free = env.cdr
+      free.each_with_index do |f, n|
+        return return_free.call(n) if f == var
+      end
+
+      raise "compile_lookup - #{var} isn't found in environment"
+    end
   end # Compiler
 end # RbScheme
