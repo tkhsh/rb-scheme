@@ -69,6 +69,16 @@ module RbScheme
       end
     end
 
+    def collect_free(vars, env, nxt)
+      return nxt if LNil === vars
+
+      collect_free(vars.cdr,
+                   env,
+                   compile_refer(vars.car,
+                                 env,
+                                 list(intern("argument"), nxt)))
+    end
+
     def compile_refer(var, env, nxt)
       compile_lookup(var,
                      env,
