@@ -20,7 +20,7 @@ module RbScheme
           check_length!(x.cdr, 2, "lambda")
           vars, body = x.cdr.to_a
 
-          free = array_to_list(find_free(body, Set.new(vars)))
+          free = convert_to_list(find_free(body, Set.new(vars)))
           collect_free(free,
                        env,
                        list(intern("close"),

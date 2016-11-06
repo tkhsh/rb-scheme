@@ -15,7 +15,7 @@ module RbScheme
     def map_eval(lst, env)
       return LNil.instance unless LCell === lst && lst.list?
       result_array = lst.map { |e| eval(e, env) }
-      array_to_list(result_array)
+      convert_to_list(result_array)
     end
 
     def progn(expr_list, env)

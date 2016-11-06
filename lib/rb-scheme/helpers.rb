@@ -10,10 +10,10 @@ module RbScheme
     end
 
     def list(*args)
-      array_to_list(args)
+      convert_to_list(args)
     end
 
-    def array_to_list(array)
+    def convert_to_list(array)
       result = LNil.instance
       array.reverse_each do |e|
         result = cons(e, result)
