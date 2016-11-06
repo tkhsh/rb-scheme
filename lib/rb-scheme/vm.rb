@@ -3,17 +3,23 @@ module RbScheme
     include Helpers
     include Symbol
 
-    def exec(acc, exp, env, rib, stack_p)
+    def exec(acc, exp, frame_p, cls, stack_p)
       loop do
         case exp.car
         when intern("halt")
           check_length!(exp.cdr, 0, "halt")
           return acc
-        when intern("refer")
-          check_length!(exp.cdr, 3, "refer")
-          n, m, x = exp.cdr.to_a
+        when intern("refer-local")
+          check_length!(exp.cdr, 2, "refer-local")
+          n, x = exp.cdr.to_a
 
-          acc = index(find_link(n, env), m)
+          acc = index(frame_p, n)
+          exp = x
+        when intern("refer-free")
+          check_length!(exp.cdr, 2, "refer-free")
+          n, x = exp.cdr.to_a
+
+          acc = index_closure(cls, n)
           exp = x
         when intern("constant")
           check_length!(exp.cdr, 2, "constant")
@@ -22,11 +28,12 @@ module RbScheme
           acc = obj
           exp = x
         when intern("close")
-          check_length!(exp.cdr, 2, "close")
-          body, x = exp.cdr.to_a
+          check_length!(exp.cdr, 3, "close")
+          n, body, x = exp.cdr.to_a
 
-          acc = closure(body, env)
+          acc = closure(body, n, stack_p)
           exp = x
+          stack_p = stack_p - n
         when intern("test")
           check_length!(exp.cdr, 2, "test")
           thenx, elsex = exp.cdr.to_a
@@ -49,7 +56,7 @@ module RbScheme
           ret, x = exp.cdr.to_a
 
           exp = x
-          stack_p = push(ret, push(env, stack_p))
+          stack_p = push(ret, push(frame_p, push(cls, stack_p)))
         when intern("argument")
           check_length!(exp.cdr, 1, "argument")
           x = exp.cadr
@@ -58,19 +65,19 @@ module RbScheme
           stack_p = push(acc, stack_p)
         when intern("apply")
           check_length!(exp.cdr, 0, "apply")
-          cls_body, cls_link = acc.to_a
 
-          exp = cls_body
-          env = stack_p
-          stack_p = push(cls_link, stack_p)
+          exp = closure_body(acc)
+          frame_p = stack_p
+          cls = acc
         when intern("return")
           check_length!(exp.cdr, 1, "return")
           n = exp.cadr
           s = stack_p - n
 
           exp = index(s, 0)
-          env = index(s, 1)
-          stack_p = s - 2
+          frame_p = index(s, 1)
+          cls = index(s, 2)
+          stack_p = s - 3
         else
           raise "Unknown instruction - #{exp.car}"
         end
@@ -91,18 +98,33 @@ module RbScheme
       end
     end
 
-    def closure(body, env)
-      list(body, env)
+    def closure(body, n, stack_p)
+      v = Array.new(n + 1)
+      v[0] = body
+
+      i = 0
+      while i == n
+        v[i + 1] = index(stack_p, i)
+        i += 1
+      end
+      v
+    end
+
+    def closure_body(cls)
+      cls[0]
+    end
+
+    def index_closure(cls, n)
+      cls[n + 1]
     end
 
     def continuation(stack_p)
-      body = list(intern("refer"),
-                  0,
+      body = list(intern("refer-local"),
                   0,
                   list(intern("nuate"),
                        save_stack(stack_p),
                        list(intern("return"), 0)))
-      closure(body, list)
+      closure(body, 0, stack_p)
     end
 
     def extend_env(env, vals)

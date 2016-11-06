@@ -8,9 +8,7 @@ module RbScheme
     def compile(x, env, nxt)
       case x
       when LSymbol
-        compile_lookup_old(x,
-                           env,
-                           lambda { |n, m| list(intern("refer"), n, m, nxt) })
+        compile_refer(x, env, nxt)
       when LCell
         case x.car
         when intern("quote")
@@ -22,10 +20,15 @@ module RbScheme
           check_length!(x.cdr, 2, "lambda")
           vars, body = x.cdr.to_a
 
-          bodyc = compile(body,
-                          extend_env(env, vars),
-                          list(intern("return"), vars.count + 1))
-          list(intern("close"), bodyc, nxt)
+          free = array_to_list(find_free(body, Set.new(vars)))
+          collect_free(free,
+                       env,
+                       list(intern("close"),
+                            free.count,
+                            compile(body,
+                                    cons(vars, free),
+                                    list(intern("return"), vars.count)),
+                            nxt))
         when intern("if")
           check_length!(x.cdr, 3, "if")
           test, then_exp, else_exp = x.cdr.to_a

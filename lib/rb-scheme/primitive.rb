@@ -100,7 +100,7 @@ module RbScheme
       lambda do |form, env|
         vm_exec(list,
                 compile(form.car, list, list(intern("halt"))),
-                list,
+                0,
                 list,
                 0)
       end
