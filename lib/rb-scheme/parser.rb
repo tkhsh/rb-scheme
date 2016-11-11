@@ -8,6 +8,10 @@ module RbScheme
 
     def_delegator :@input, :getc
 
+    def self.read_expr(input)
+      new(input).read_expr
+    end
+
     def initialize(input)
       @input = input
     end
