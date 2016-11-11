@@ -74,6 +74,47 @@ module RbScheme
       end
     end
 
+    def find_sets(exp, vars)
+      case exp
+      when LSymbol
+        Set.new
+      when LCell
+        case exp.car
+        when intern("quote")
+          Set.new
+        when intern("lambda")
+          check_length!(exp.cdr, 2, "find_sets(lambda)")
+          new_vars, body = exp.cdr.to_a
+
+          find_sets(body, vars.subtract(new_vars))
+        when intern("if")
+          check_length!(exp.cdr, 3, "find_sets(if)")
+          test, then_x, else_x = exp.cdr.to_a
+
+          [test, then_x, else_x].inject(Set.new) do |res, x|
+            res.union(find_sets(x, vars))
+          end
+        when intern("set!")
+          check_length!(exp.cdr, 2, "find_sets(set!)")
+          var, x = exp.cdr.to_a
+
+          s = vars.member?(var) ? Set.new([var]) : Set.new
+          s.union(find_sets(x, vars))
+        when intern("call/cc")
+          check_length!(exp.cdr, 1, "find_sets(call/cc)")
+          x = exp.cadr
+
+          find_sets(x, vars)
+        else
+          exp.inject(Set.new) do |res, x|
+            res.union(find_sets(x, vars))
+          end
+        end
+      else
+        Set.new
+      end
+    end
+
     def find_free(exp, bound_variables)
       case exp
       when LSymbol
