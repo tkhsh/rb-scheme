@@ -100,6 +100,7 @@ class TestExecuter < Minitest::Test
     (vm_eval ((lambda (x) x) 1))
     (vm_eval ((lambda (a b) ((lambda (x y) x) b 3)) 4 5))
     (vm_eval '(1 2))
+    (vm_eval (if #f 1 2))
     (vm_eval ((lambda (x) (call/cc (lambda (s) (s 9)))) 4))
     EXPRS
     # (vm_eval ((lambda (x) (set! x 10)) 1))
@@ -123,6 +124,11 @@ class TestExecuter < Minitest::Test
       assert_instance_of LCell, result3
       assert_equal 1, result3.car.value
       assert_equal 2, result3.cadr.value
+
+      # (vm_eval (if #f 1 2))
+      test_if = eval_next(@env)
+      assert_instance_of LInt, test_if
+      assert_equal 2, test_if.value
 
       # (vm_eval ((lambda (x) (set! x 10) x) 1))
       # result4 = eval_next(@env)

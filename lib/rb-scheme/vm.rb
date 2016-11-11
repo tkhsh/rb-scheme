@@ -38,7 +38,7 @@ module RbScheme
           check_length!(exp.cdr, 2, "test")
           thenx, elsex = exp.cdr.to_a
 
-          exp = acc ? thenx : elsex
+          exp = LFalse === acc ? elsex : thenx
         when intern("conti")
           check_length!(exp.cdr, 1, "conti")
           x = exp.cadr
