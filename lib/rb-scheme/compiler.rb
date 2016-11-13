@@ -115,6 +115,19 @@ module RbScheme
       end
     end
 
+    def make_boxes(sets, vars, nxt)
+      n = vars.count - 1
+      res = nxt
+
+      vars.reverse_each do |v|
+        if sets.member?(v)
+          res = list(intern("box"), n, res)
+        end
+        n -= 1
+      end
+      res
+    end
+
     def find_free(exp, bound_variables)
       case exp
       when LSymbol

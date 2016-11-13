@@ -49,5 +49,35 @@ class TestCompiler < Minitest::Test
       assert result.empty?
     end
   end
+
+  def test_make_boxes
+    StringIO.open("((a b c) (b y c) nxt)") do |io|
+      exp = Parser.read_expr io
+      sets = Set.new(exp.car)
+      vars = exp.cadr
+      nxt = exp.caddr
+
+      result = @compiler.make_boxes sets, vars, nxt
+      assert result.list?
+      assert_equal 3, result.count
+      assert_equal "box", result.car.name
+      assert_equal 0, result.cadr
+
+      third = result.caddr
+      assert_equal "box", third.car.name
+      assert_equal 2, third.cadr
+    end
+
+    StringIO.open("((a b c) (x y) nxt)") do |io|
+      exp = Parser.read_expr io
+      sets = Set.new(exp.car)
+      vars = exp.cadr
+      nxt = exp.caddr
+
+      result = @compiler.make_boxes sets, vars, nxt
+      assert_equal LSymbol, result.class
+      assert_equal "nxt", result.name
+    end
+  end
 end
 
