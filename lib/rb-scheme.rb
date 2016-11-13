@@ -1,6 +1,7 @@
 require "forwardable"
 
 require 'rb-scheme/lisp-objects'
+require 'rb-scheme/box'
 require 'rb-scheme/helpers'
 require 'rb-scheme/symbol'
 require 'rb-scheme/parser'
