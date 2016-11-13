@@ -21,6 +21,11 @@ module RbScheme
 
           acc = index_closure(cls, n)
           exp = x
+        when intern("indirect")
+          check_length!(exp.cdr, 1, "indirect")
+          x = exp.cadr
+
+          acc = acc.unbox
         when intern("constant")
           check_length!(exp.cdr, 2, "constant")
           obj, x = exp.cdr.to_a
@@ -34,11 +39,29 @@ module RbScheme
           acc = closure(body, n, stack_p)
           exp = x
           stack_p = stack_p - n
+        when intern("box")
+          check_length!(exp.cdr, 2, "box")
+          n, x = exp.cdr.to_a
+
+          index_set!(stack_p, n, Box.new(index(stack_p, n)))
+          exp = x
         when intern("test")
           check_length!(exp.cdr, 2, "test")
           thenx, elsex = exp.cdr.to_a
 
           exp = LFalse === acc ? elsex : thenx
+        when intern("assign-local")
+          check_length!(exp.cdr, 2, "assign-local")
+          n, x = exp.cdr.to_a
+
+          index(frame_p, n).set_box!(acc)
+          exp = x
+        when intern("assign-free")
+          check_length!(exp.cdr, 2, "assign-free")
+          n, x = exp.cdr.to_a
+
+          index_closure(cls, n).set_box!(acc)
+          exp = x
         when intern("conti")
           check_length!(exp.cdr, 1, "conti")
           x = exp.cadr

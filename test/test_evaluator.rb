@@ -102,8 +102,8 @@ class TestExecuter < Minitest::Test
     (vm_eval '(1 2))
     (vm_eval (if #f 1 2))
     (vm_eval ((lambda (x) (call/cc (lambda (s) (s 9)))) 4))
+    (vm_eval ((lambda (x) (set! x 10)) 1))
     EXPRS
-    # (vm_eval ((lambda (x) (set! x 10)) 1))
     # (vm_eval ((lambda (x) (if 1 x (set! x 2)))
     #           3))
     StringIO.open(vm_eval_exprs) do |strio|
@@ -130,10 +130,6 @@ class TestExecuter < Minitest::Test
       assert_instance_of LInt, test_if
       assert_equal 2, test_if.value
 
-      # (vm_eval ((lambda (x) (set! x 10) x) 1))
-      # result4 = eval_next(@env)
-      # assert_equal 10, result4.value
-      #
       # # (vm_eval ((lambda (x) (if 1 x (set! x 2)) x)
       # #           3))
       # result5 = eval_next(@env)
@@ -142,6 +138,10 @@ class TestExecuter < Minitest::Test
       # (vm_eval ((lambda (x) (call/cc (lambda (s) 3))) 4))
       result6 = eval_next(@env)
       assert_equal 9, result6.value
+
+      # (vm_eval ((lambda (x) (set! x 10)) 1))
+      test_assignment = eval_next(@env)
+      assert_equal 10, test_assignment.value
     end
 
   end

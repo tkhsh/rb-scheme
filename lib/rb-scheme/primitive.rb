@@ -96,10 +96,12 @@ module RbScheme
       end
     end
 
+    require 'set'
     def syntax_vm_eval
       lambda do |form, env|
+        c = compile(form.car, list, Set.new, list(intern("halt")))
         vm_exec(list,
-                compile(form.car, list, list(intern("halt"))),
+                c,
                 0,
                 list,
                 0)
