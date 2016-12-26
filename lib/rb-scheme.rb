@@ -1,4 +1,5 @@
 require "forwardable"
+require "set"
 
 require 'rb-scheme/lisp-objects'
 require 'rb-scheme/helpers'

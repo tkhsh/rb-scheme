@@ -1,5 +1,3 @@
-require 'set'
-
 module RbScheme
   class Compiler
     include Helpers
