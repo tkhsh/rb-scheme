@@ -108,6 +108,15 @@ module RbScheme
       end
     end
 
+    def shift_args(n, m, s)
+      i = n - 1
+      until i < 0
+        index_set!(s, i + m, index(s, i))
+        i -= 1
+      end
+      s - m
+    end
+
     def lookup(n, m, env)
       env.each_with_index do |rib, rib_idx|
         if rib_idx == n
