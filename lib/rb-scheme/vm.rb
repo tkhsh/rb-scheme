@@ -71,10 +71,10 @@ module RbScheme
           exp = x
         when intern("nuate")
           check_length!(exp.cdr, 2, "nuate")
-          p, x = exp.cdr.to_a
+          saved_stack, x = exp.cdr.to_a
 
           exp = x
-          stack_p = restore_stack(p)
+          stack_p = restore_stack(saved_stack)
         when intern("frame")
           check_length!(exp.cdr, 2, "frame")
           ret, x = exp.cdr.to_a
