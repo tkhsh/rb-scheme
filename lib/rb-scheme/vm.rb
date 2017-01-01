@@ -136,7 +136,7 @@ module RbScheme
       v[0] = body
 
       i = 0
-      while i == n
+      until i == n
         v[i + 1] = index(stack_p, i)
         i += 1
       end

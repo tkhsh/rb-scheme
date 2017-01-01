@@ -19,6 +19,7 @@ class TestVM < Minitest::Test
     vm_eval_exprs = <<-EXPRS
     (vm_eval ((lambda (x) x) 1))
     (vm_eval ((lambda (a b) ((lambda (x y) x) b 3)) 4 5))
+    (vm_eval ((lambda (a b) ((lambda (x y) (if #t a b)) b 3)) 4 5))
     EXPRS
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
@@ -32,6 +33,11 @@ class TestVM < Minitest::Test
       result2 = eval_next(@env)
       assert_instance_of LInt, result2
       assert_equal 5, result2.value
+
+      # (vm_eval ((lambda (a b) ((lambda (x y) (if #t a b)) b 3)) 4 5))
+      result3 = eval_next(@env)
+      assert_instance_of LInt, result3
+      assert_equal 4, result3.value
     end
   end
 
