@@ -156,9 +156,9 @@ module RbScheme
           check_length!(exp.cdr, 3, "find_free(if)")
           test_x, then_x, else_x = exp.cdr.to_a
 
-          bound_variables.union(find_free(test_x))
-                         .union(find_free(then_x))
-                         .union(find_free(else_x))
+          find_free(test_x, bound_variables)
+            .union(find_free(then_x, bound_variables))
+            .union(find_free(else_x, bound_variables))
         when intern("set!")
           check_length!(exp.cdr, 2, "find_free(set!)")
           var, exp = exp.cdr.to_a

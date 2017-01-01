@@ -1,11 +1,59 @@
 require 'helper'
-require 'set'
 
 class TestCompiler < Minitest::Test
   include RbScheme
+  include RbScheme::Symbol
 
   def setup
     @compiler = Compiler.new
+  end
+
+  def test_find_free
+    StringIO.open("(a)") do |strio|
+      exp = Parser.read_expr(strio)
+      vars = Set.new([intern("x"), intern("y")])
+      result = @compiler.find_free(exp, vars)
+      assert_equal 1, result.count
+      assert_equal intern("a"), result.first
+    end
+
+    StringIO.open("('a)") do |strio|
+      exp = Parser.read_expr(strio)
+      vars = Set.new
+      result = @compiler.find_free(exp, vars)
+      assert result.empty?
+    end
+
+    StringIO.open("(lambda (a) a)") do |strio|
+      exp = Parser.read_expr(strio)
+      vars = Set.new([intern("x")])
+      result = @compiler.find_free(exp, vars)
+      assert result.empty?
+    end
+
+    StringIO.open("(if a b c)") do |strio|
+      exp = Parser.read_expr(strio)
+      vars = Set.new([intern("x"), intern("a")])
+      result = @compiler.find_free(exp, vars)
+      assert_equal 2, result.count
+      assert_equal Set.new([intern("b"), intern("c")]), result
+    end
+
+    StringIO.open("(set! a b)") do |strio|
+      exp = Parser.read_expr(strio)
+      vars = Set.new([intern("x")])
+      result = @compiler.find_free(exp, vars)
+      assert_equal 2, result.count
+      assert_equal Set.new([intern("a"), intern("b")]), result
+    end
+
+    StringIO.open("(call/cc (lambda (r) a))") do |strio|
+      exp = Parser.read_expr(strio)
+      vars = Set.new([intern("x")])
+      result = @compiler.find_free(exp, vars)
+      assert_equal 1, result.count
+      assert_equal Set.new([intern("a")]), result
+    end
   end
 
   def test_find_sets
