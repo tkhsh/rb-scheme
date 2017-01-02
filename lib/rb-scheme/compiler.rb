@@ -51,18 +51,24 @@ module RbScheme
           check_length!(exp.cdr, 1, "call/cc")
           x = exp.cadr
 
+          cn = tail?(nxt) ?
+            list(intern("shift"), 1, nxt.cadr, list(intern("apply"))) :
+            list(intern("apply"))
           c = list(intern("conti"),
                    list(intern("argument"),
-                        compile(x, env, sets, list(intern("apply")))))
-          list(intern("frame"), nxt, c)
+                        compile(x, env, sets, cn)))
+          tail?(nxt) ? c : list(intern("frame"), nxt, c)
         else
           args = exp.cdr
-          c = compile(exp.car, env, sets, list(intern("apply")))
+          cn = tail?(nxt) ?
+            list(intern("shift"), exp.cdr.count, nxt.cadr, list(intern("apply"))) :
+            list(intern("apply"))
+          c = compile(exp.car, env, sets, cn)
 
           args.each do |arg|
             c = compile(arg, env, sets, list(intern("argument"), c))
           end
-          list(intern("frame"), nxt, c)
+          tail?(nxt) ? c : list(intern("frame"), nxt, c)
         end
       else
         list(intern("constant"), exp, nxt)

@@ -87,6 +87,12 @@ module RbScheme
 
           exp = x
           stack_p = push(acc, stack_p)
+        when intern("shift")
+          check_length!(exp.cdr, 3, "shift")
+          n, m, x = exp.cdr.to_a
+
+          exp = x
+          stack_p = shift_args(n, m, stack_p)
         when intern("apply")
           check_length!(exp.cdr, 0, "apply")
 
