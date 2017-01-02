@@ -3,22 +3,22 @@ module RbScheme
     include Helpers
     include Symbol
 
-    def compile(x, env, sets, nxt)
-      case x
+    def compile(exp, env, sets, nxt)
+      case exp
       when LSymbol
-        compile_refer(x,
+        compile_refer(exp,
                       env,
-                      sets.member?(x) ? list(intern("indirect"), nxt) : nxt)
+                      sets.member?(exp) ? list(intern("indirect"), nxt) : nxt)
       when LCell
-        case x.car
+        case exp.car
         when intern("quote")
-          check_length!(x.cdr, 1, "quote")
-          obj = x.cadr
+          check_length!(exp.cdr, 1, "quote")
+          obj = exp.cadr
 
           list(intern("constant"), obj, nxt)
         when intern("lambda")
-          check_length!(x.cdr, 2, "lambda")
-          vars, body = x.cdr.to_a
+          check_length!(exp.cdr, 2, "lambda")
+          vars, body = exp.cdr.to_a
 
           free = convert_to_list(find_free(body, Set.new(vars)))
           sets_body = find_sets(body, Set.new(vars))
@@ -33,31 +33,31 @@ module RbScheme
                             make_boxes(sets_body, vars, c),
                             nxt))
         when intern("if")
-          check_length!(x.cdr, 3, "if")
-          test, then_exp, else_exp = x.cdr.to_a
+          check_length!(exp.cdr, 3, "if")
+          test, then_exp, else_exp = exp.cdr.to_a
 
           thenc = compile(then_exp, env, sets, nxt)
           elsec = compile(else_exp, env, sets, nxt)
           compile(test, env, sets, list(intern("test"), thenc, elsec))
         when intern("set!")
-          check_length!(x.cdr, 2, "set!")
-          var, x = x.cdr.to_a
+          check_length!(exp.cdr, 2, "set!")
+          var, x = exp.cdr.to_a
 
           compile_lookup(var,
                          env,
                          lambda { |n| compile(x, env, sets, list(intern("assign-local"), n, nxt)) },
                          lambda { |n| compile(x, env, sets, list(intern("assign-free"), n, nxt)) })
         when intern("call/cc")
-          check_length!(x.cdr, 1, "call/cc")
-          exp = x.cadr
+          check_length!(exp.cdr, 1, "call/cc")
+          x = exp.cadr
 
           c = list(intern("conti"),
                    list(intern("argument"),
-                        compile(exp, env, sets, list(intern("apply")))))
+                        compile(x, env, sets, list(intern("apply")))))
           list(intern("frame"), nxt, c)
         else
-          args = x.cdr
-          c = compile(x.car, env, sets, list(intern("apply")))
+          args = exp.cdr
+          c = compile(exp.car, env, sets, list(intern("apply")))
 
           args.each do |arg|
             c = compile(arg, env, sets, list(intern("argument"), c))
@@ -65,7 +65,7 @@ module RbScheme
           list(intern("frame"), nxt, c)
         end
       else
-        list(intern("constant"), x, nxt)
+        list(intern("constant"), exp, nxt)
       end
     end
 
