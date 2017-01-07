@@ -1,8 +1,14 @@
 module RbScheme
   class VM
+    extend Forwardable
     include Helpers
     include Symbol
-    include Stack
+
+    def_delegators :@stack, :push, :index, :index_set!, :save_stack, :restore_stack
+
+    def initialize
+      @stack = Stack.new
+    end
 
     def exec(acc, exp, frame_p, cls, stack_p)
       loop do
