@@ -79,18 +79,6 @@ module RbScheme
       nxt.car == intern("return")
     end
 
-    def extend_env(env, var_rib)
-      cons(var_rib, env)
-    end
-
-    def compile_lookup_old(var, env, ret)
-      env.each_with_index do |rib, i|
-        rib.each_with_index do |elt, j|
-          return ret.call(i, j) if elt.equal?(var)
-        end
-      end
-    end
-
     def find_sets(exp, vars)
       case exp
       when LSymbol
