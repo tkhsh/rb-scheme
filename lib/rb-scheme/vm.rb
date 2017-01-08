@@ -129,20 +129,6 @@ module RbScheme
       s - m
     end
 
-    def lookup(n, m, env)
-      env.each_with_index do |rib, rib_idx|
-        if rib_idx == n
-          vals = rib
-
-          m.times do
-            vals = vals.cdr
-          end
-
-          return vals
-        end
-      end
-    end
-
     def closure(body, n, stack_p)
       v = Array.new(n + 1)
       v[0] = body
@@ -170,17 +156,6 @@ module RbScheme
                        save_stack(stack_p),
                        list(intern("return"), 0)))
       closure(body, 0, stack_p)
-    end
-
-    def extend_env(env, vals)
-      cons(vals, env)
-    end
-
-    def find_link(n, env)
-      n.times do
-        env = index(env, -1)
-      end
-      env
     end
 
   end # VM
