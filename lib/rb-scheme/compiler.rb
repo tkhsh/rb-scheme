@@ -136,7 +136,7 @@ module RbScheme
     def find_free(exp, bound_variables)
       case exp
       when LSymbol
-        bound_variables.member?(intern(exp.name)) ? Set.new : Set.new(list(exp))
+        bound_variables.member?(exp) ? Set.new : Set.new(list(exp))
       when LCell
         case exp.car
         when intern("quote")
