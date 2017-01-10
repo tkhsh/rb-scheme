@@ -102,9 +102,7 @@ module RbScheme
         when intern("apply")
           check_length!(exp.cdr, 0, "apply")
           if compound_procedure?(acc)
-            exp = closure_body(acc)
-            frame_p = stack_p
-            cls = acc
+            exp, frame_p, cls = apply_compound(acc, stack_p)
           else
             raise "invalid application"
           end
@@ -121,6 +119,11 @@ module RbScheme
           raise "Unknown instruction - #{exp.car}"
         end
       end
+    end
+
+    def apply_compound(acc, stack_p)
+      # [exp, frame_p, cls]
+      [closure_body(acc), stack_p, acc]
     end
 
     def compound_procedure?(procedure)
