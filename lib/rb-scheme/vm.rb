@@ -101,10 +101,13 @@ module RbScheme
           stack_p = shift_args(n, m, stack_p)
         when intern("apply")
           check_length!(exp.cdr, 0, "apply")
-
-          exp = closure_body(acc)
-          frame_p = stack_p
-          cls = acc
+          if compound_procedure?(acc)
+            exp = closure_body(acc)
+            frame_p = stack_p
+            cls = acc
+          else
+            raise "invalid application"
+          end
         when intern("return")
           check_length!(exp.cdr, 1, "return")
           n = exp.cadr
@@ -118,6 +121,10 @@ module RbScheme
           raise "Unknown instruction - #{exp.car}"
         end
       end
+    end
+
+    def compound_procedure?(procedure)
+      procedure.is_a?(Array)
     end
 
     def shift_args(n, m, s)
