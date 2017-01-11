@@ -3,6 +3,7 @@ module RbScheme
     extend Forwardable
     include Helpers
     include Symbol
+    include Global
 
     def_delegators :@evaluator, :eval, :lookup_variable
     def_delegator :@printer, :print
@@ -98,6 +99,7 @@ module RbScheme
 
     def syntax_vm_eval
       lambda do |form, env|
+        initialize_vm_primitive!
         c = compile(form.car, list, Set.new, list(intern("halt")))
         vm_exec(list,
                 c,
@@ -105,6 +107,37 @@ module RbScheme
                 list,
                 0)
       end
+    end
+
+    def initialize_vm_primitive!
+      put_global(intern("+"), lambda do |n1, n2|
+        LInt.new(n1.value + n2.value)
+      end)
+
+      put_global(intern("-"), lambda do |n1, n2|
+        LInt.new(n1.value - n2.value)
+      end)
+
+      put_global(intern("*"), lambda do |n1, n2|
+        LInt.new(n1.value * n2.value)
+      end)
+
+      put_global(intern("/"), lambda do |n1, n2|
+        LInt.new(n1.value / n2.value)
+      end)
+
+      put_global(intern("<"), lambda do |n1, n2|
+        boolean(n1.value < n2.value)
+      end)
+
+      put_global(intern(">"), lambda do |n1, n2|
+        boolean(n1.value > n2.value)
+      end)
+
+      put_global(intern("null?"), lambda do |lst|
+        boolean(lst.is_a?(LNil))
+      end)
+      # todo...
     end
 
     def subr_cons
