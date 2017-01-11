@@ -92,4 +92,54 @@ class TestVM < Minitest::Test
     end
   end
 
+  def test_vm_primitive_arithmetic
+    vm_eval_exprs = <<-EXPRS
+    (vm_eval (+ 2 3))
+    (vm_eval (- 2 3))
+    (vm_eval (* 5 10))
+    (vm_eval (/ 10 3))
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      # (vm_eval (+ 2 3))
+      result1 = eval_next(@env)
+      assert_equal 5, result1.value
+
+      # (vm_eval (- 2 3))
+      result2 = eval_next(@env)
+      assert_equal -1, result2.value
+
+      # (vm_eval (* 5 10))
+      result3 = eval_next(@env)
+      assert_equal 50, result3.value
+
+      # (vm_eval (/ 10 3))
+      result4 = eval_next(@env)
+      assert_equal 3, result4.value
+    end
+  end
+
+  def test_vm_primitive_predicate
+    vm_eval_exprs = <<-EXPRS
+    (vm_eval (< 2 3))
+    (vm_eval (> 2 3))
+    (vm_eval (> 1 1))
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      # (vm_eval (< 2 3))
+      result1 = eval_next(@env)
+      assert_instance_of LTrue, result1
+
+      # (vm_eval (> 2 3))
+      result2 = eval_next(@env)
+      assert_instance_of LFalse, result2
+
+      # (vm_eval (> 1 1))
+      result3 = eval_next(@env)
+      assert_instance_of LFalse, result3
+    end
+  end
 end

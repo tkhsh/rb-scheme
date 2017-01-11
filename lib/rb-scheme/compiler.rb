@@ -2,6 +2,7 @@ module RbScheme
   class Compiler
     include Helpers
     include Symbol
+    include Global
 
     def compile(exp, env, sets, nxt)
       case exp
@@ -20,7 +21,9 @@ module RbScheme
           check_length!(exp.cdr, 2, "lambda")
           vars, body = exp.cdr.to_a
 
-          free = convert_to_list(find_free(body, Set.new(vars)))
+          local_bound = Set.new(vars)
+          global_bound = Set.new(global_variables)
+          free = convert_to_list(find_free(body, local_bound.union(global_bound)))
           sets_body = find_sets(body, Set.new(vars))
           c = compile(body,
                       cons(vars, free),
@@ -46,14 +49,15 @@ module RbScheme
           compile_lookup(var,
                          env,
                          lambda { |n| compile(x, env, sets, list(intern("assign-local"), n, nxt)) },
-                         lambda { |n| compile(x, env, sets, list(intern("assign-free"), n, nxt)) })
+                         lambda { |n| compile(x, env, sets, list(intern("assign-free"), n, nxt)) },
+                         lambda { |k| raise NotImplementedError, "Can't assign global varialbe" })
         when intern("call/cc")
           check_length!(exp.cdr, 1, "call/cc")
           x = exp.cadr
 
           cn = tail?(nxt) ?
-            list(intern("shift"), 1, nxt.cadr, list(intern("apply"))) :
-            list(intern("apply"))
+            list(intern("shift"), 1, nxt.cadr, list(intern("apply"), 1)) :
+            list(intern("apply"), 1)
           c = list(intern("conti"),
                    list(intern("argument"),
                         compile(x, env, sets, cn)))
@@ -61,8 +65,8 @@ module RbScheme
         else
           args = exp.cdr
           cn = tail?(nxt) ?
-            list(intern("shift"), exp.cdr.count, nxt.cadr, list(intern("apply"))) :
-            list(intern("apply"))
+            list(intern("shift"), exp.cdr.count, nxt.cadr, list(intern("apply"), args.count)) :
+            list(intern("apply"), args.count)
           c = compile(exp.car, env, sets, cn)
 
           args.each do |arg|
@@ -188,18 +192,25 @@ module RbScheme
       compile_lookup(var,
                      env,
                      lambda { |n| list(intern("refer-local"), n, nxt) },
-                     lambda { |n| list(intern("refer-free"), n, nxt) })
+                     lambda { |n| list(intern("refer-free"), n, nxt) },
+                     lambda { |k| list(intern("refer-global"), k, nxt) })
     end
 
-    def compile_lookup(var, env, return_local, return_free)
-      locals = env.car
-      locals.each_with_index do |l, n|
-        return return_local.call(n) if l == var
+    def compile_lookup(var, env, return_local, return_free, return_global)
+      unless env.is_a?(LNil)
+        locals = env.car
+        locals.each_with_index do |l, n|
+          return return_local.call(n) if l == var
+        end
+
+        free = env.cdr
+        free.each_with_index do |f, n|
+          return return_free.call(n) if f == var
+        end
       end
 
-      free = env.cdr
-      free.each_with_index do |f, n|
-        return return_free.call(n) if f == var
+      if global_define?(var)
+        return return_global.call(var)
       end
 
       raise "compile_lookup - #{var} isn't found in environment"

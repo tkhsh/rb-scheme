@@ -3,6 +3,7 @@ module RbScheme
     extend Forwardable
     include Helpers
     include Symbol
+    include Global
 
     def_delegators :@stack, :push, :index, :index_set!, :save_stack, :restore_stack
 
@@ -27,6 +28,12 @@ module RbScheme
           n, x = exp.cdr.to_a
 
           acc = index_closure(cls, n)
+          exp = x
+        when intern("refer-global")
+          check_length!(exp.cdr, 2, "refer-free")
+          key, x = exp.cdr.to_a
+
+          acc = get_global(key)
           exp = x
         when intern("indirect")
           check_length!(exp.cdr, 1, "indirect")
@@ -100,8 +107,13 @@ module RbScheme
           exp = x
           stack_p = shift_args(n, m, stack_p)
         when intern("apply")
-          check_length!(exp.cdr, 0, "apply")
-          if compound_procedure?(acc)
+          check_length!(exp.cdr, 1, "apply")
+          arg_len = exp.cadr
+
+          if primitive_procedure?(acc)
+            acc = apply_primitive(acc, arg_len, stack_p)
+            exp, frame_p, cls, stack_p = return_primitive(stack_p, arg_len)
+          elsif compound_procedure?(acc)
             exp, frame_p, cls = apply_compound(acc, stack_p)
           else
             raise "invalid application"
@@ -121,9 +133,29 @@ module RbScheme
       end
     end
 
+    def apply_primitive(fn, arg_len, stack_p)
+      i = 0
+      args = []
+      arg_len.times do
+        args.push(index(stack_p, i))
+        i += 1
+      end
+      fn.call(*args)
+    end
+
+    def return_primitive(stack_p, arg_len)
+      s = stack_p - arg_len
+      # [exp, frame_p, cls, stack_p]
+      [index(s, 0), index(s, 1), index(s, 2), s -3]
+    end
+
     def apply_compound(acc, stack_p)
       # [exp, frame_p, cls]
       [closure_body(acc), stack_p, acc]
+    end
+
+    def primitive_procedure?(procedure)
+      procedure.is_a?(Proc)
     end
 
     def compound_procedure?(procedure)
