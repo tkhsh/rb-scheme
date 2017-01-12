@@ -142,4 +142,31 @@ class TestVM < Minitest::Test
       assert_instance_of LFalse, result3
     end
   end
+
+  def test_vm_primitive_constructor
+    vm_eval_exprs = <<-EXPRS
+    (vm_eval (cons 2 3))
+    (vm_eval (car (cons 1 10)))
+    (vm_eval (cdr (cons 1 100)))
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      # (vm_eval (cons 2 3))
+      result1 = eval_next(@env)
+      assert_instance_of LCell, result1
+      assert_equal 2, result1.car.value
+      assert_equal 3, result1.cdr.value
+
+      # (vm_eval (car (cons 1 10)))
+      result2 = eval_next(@env)
+      assert_instance_of LInt, result2
+      assert_equal 1, result2.value
+
+      # (vm_eval (cdr (cons 1 10)))
+      result3 = eval_next(@env)
+      assert_instance_of LInt, result3
+      assert_equal 100, result3.value
+    end
+  end
 end

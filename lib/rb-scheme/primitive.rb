@@ -137,6 +137,18 @@ module RbScheme
       put_global(intern("null?"), lambda do |lst|
         boolean(lst.is_a?(LNil))
       end)
+
+      put_global(intern("cons"), lambda do |e1, e2|
+        cons(e1, e2)
+      end)
+
+      put_global(intern("car"), lambda do |c|
+        c.car
+      end)
+
+      put_global(intern("cdr"), lambda do |c|
+        c.cdr
+      end)
       # todo...
     end
 
