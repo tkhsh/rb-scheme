@@ -98,6 +98,18 @@ class TestVM < Minitest::Test
     end
   end
 
+  def test_vm_define
+    vm_eval_exprs = <<-EXPRS
+    (vm_eval (define x 5))
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      result = eval_next(@env)
+      assert_equal 5, result.value
+    end
+  end
+
   def test_vm_primitive_arithmetic
     vm_eval_exprs = <<-EXPRS
     (vm_eval (+ 2 3))

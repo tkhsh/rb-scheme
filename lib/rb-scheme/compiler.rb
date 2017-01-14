@@ -51,6 +51,12 @@ module RbScheme
                          lambda { |n| compile(x, env, sets, list(intern("assign-local"), n, nxt)) },
                          lambda { |n| compile(x, env, sets, list(intern("assign-free"), n, nxt)) },
                          lambda { |k| compile(x, env, sets, list(intern("assign-global"), k, nxt)) })
+        when intern("define")
+          check_length!(exp.cdr, 2, "define")
+          var, x = exp.cdr.to_a
+
+          put_global(var, nil)
+          compile(x, env, sets, list(intern("assign-global"), var, nxt))
         when intern("call/cc")
           check_length!(exp.cdr, 1, "call/cc")
           x = exp.cadr
@@ -109,6 +115,8 @@ module RbScheme
 
           s = vars.member?(var) ? Set.new([var]) : Set.new
           s.union(find_sets(x, vars))
+        when intern("define")
+          raise "Only top level define is supported"
         when intern("call/cc")
           check_length!(exp.cdr, 1, "find_sets(call/cc)")
           x = exp.cadr
@@ -163,6 +171,8 @@ module RbScheme
 
           free = find_free(exp, bound_variables)
           bound_variables.member?(var) ? free : Set[var].union(free)
+        when intern("define")
+          raise "Only top level define is supported"
         when intern("call/cc")
           check_length!(exp.cdr, 1, "find_free(call/cc)")
           x = exp.cadr
