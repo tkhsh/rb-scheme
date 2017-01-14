@@ -4,13 +4,9 @@ module RbScheme
     include Helpers
 
     def_delegator :@parser, :read_expr
-    def_delegators :@primitive, :add_primitive!, :initialize_vm_primitive!
+    def_delegator :@primitive, :initialize_vm_primitive!
     def_delegator :@evaluator, :vm_eval
     def_delegator :@printer, :print, :print_lisp_object
-
-    def init_env
-      cons(LNil.instance, LNil.instance)
-    end
 
     def self.run(source)
       new(source).exec
@@ -33,18 +29,16 @@ module RbScheme
     end
 
     def exec
-      env = init_env
-      add_primitive!(env)
       initialize_vm_primitive!
 
       if File.file?(@source)
-        exec_file(env)
+        exec_file
       else
-        exec_repl(env)
+        exec_repl
       end
     end
 
-    def exec_file(env)
+    def exec_file
       result = nil
       loop do
         expr = read_expr
@@ -54,7 +48,7 @@ module RbScheme
       print_lisp_object(result)
     end
 
-    def exec_repl(env)
+    def exec_repl
       loop do
         print "> "
         expr = read_expr
