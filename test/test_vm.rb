@@ -5,12 +5,10 @@ class TestVM < Minitest::Test
 
   def setup
     @executer = Executer.new(STDIN)
-    @env = @executer.init_env
-    @executer.add_primitive!(@env)
     @executer.initialize_vm_primitive!
   end
 
-  def eval_next(env)
+  def eval_next
     expr = @executer.read_expr
     raise if expr.nil?
     @executer.vm_eval(expr)
@@ -26,17 +24,17 @@ class TestVM < Minitest::Test
       @executer.set_source!(strio)
 
       # ((lambda (x) x) 1)
-      result1 = eval_next(@env)
+      result1 = eval_next
       assert_instance_of LInt, result1
       assert_equal 1, result1.value
 
       # ((lambda (a b) ((lambda (x y) x) b 3)) 4 5)
-      result2 = eval_next(@env)
+      result2 = eval_next
       assert_instance_of LInt, result2
       assert_equal 5, result2.value
 
       # ((lambda (a b) ((lambda (x y) (if #t a b)) b 3)) 4 5)
-      result3 = eval_next(@env)
+      result3 = eval_next
       assert_instance_of LInt, result3
       assert_equal 4, result3.value
     end
@@ -48,7 +46,7 @@ class TestVM < Minitest::Test
     EXPRS
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
-      result = eval_next(@env)
+      result = eval_next
       assert_instance_of LCell, result
       assert_equal 1, result.car.value
       assert_equal 2, result.cadr.value
@@ -61,7 +59,7 @@ class TestVM < Minitest::Test
     EXPRS
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
-      result = eval_next(@env)
+      result = eval_next
       assert_instance_of LInt, result
       assert_equal 2, result.value
     end
@@ -75,7 +73,7 @@ class TestVM < Minitest::Test
     EXPRS
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
-      result = eval_next(@env)
+      result = eval_next
       assert_equal 9, result.value
     end
   end
@@ -89,12 +87,12 @@ class TestVM < Minitest::Test
       @executer.set_source!(strio)
 
       # ((lambda (x) (set! x 10)) 1)
-      result = eval_next(@env)
+      result = eval_next
       assert_equal 10, result.value
 
       # assign global variable
       # (set! + 100)
-      result = eval_next(@env)
+      result = eval_next
       assert_equal 100, result.value
     end
   end
@@ -106,7 +104,7 @@ class TestVM < Minitest::Test
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
 
-      result = eval_next(@env)
+      result = eval_next
       assert_equal 5, result.value
     end
   end
@@ -122,19 +120,19 @@ class TestVM < Minitest::Test
       @executer.set_source!(strio)
 
       # (+ 2 3)
-      result1 = eval_next(@env)
+      result1 = eval_next
       assert_equal 5, result1.value
 
       # (- 2 3)
-      result2 = eval_next(@env)
+      result2 = eval_next
       assert_equal -1, result2.value
 
       # (* 5 10)
-      result3 = eval_next(@env)
+      result3 = eval_next
       assert_equal 50, result3.value
 
       # (/ 10 3)
-      result4 = eval_next(@env)
+      result4 = eval_next
       assert_equal 3, result4.value
     end
   end
@@ -149,15 +147,15 @@ class TestVM < Minitest::Test
       @executer.set_source!(strio)
 
       # (< 2 3)
-      result1 = eval_next(@env)
+      result1 = eval_next
       assert_instance_of LTrue, result1
 
       # (> 2 3)
-      result2 = eval_next(@env)
+      result2 = eval_next
       assert_instance_of LFalse, result2
 
       # (> 1 1)
-      result3 = eval_next(@env)
+      result3 = eval_next
       assert_instance_of LFalse, result3
     end
   end
@@ -172,18 +170,18 @@ class TestVM < Minitest::Test
       @executer.set_source!(strio)
 
       # (cons 2 3)
-      result1 = eval_next(@env)
+      result1 = eval_next
       assert_instance_of LCell, result1
       assert_equal 2, result1.car.value
       assert_equal 3, result1.cdr.value
 
       # (car (cons 1 10))
-      result2 = eval_next(@env)
+      result2 = eval_next
       assert_instance_of LInt, result2
       assert_equal 1, result2.value
 
       # (cdr (cons 1 10))
-      result3 = eval_next(@env)
+      result3 = eval_next
       assert_instance_of LInt, result3
       assert_equal 100, result3.value
     end
