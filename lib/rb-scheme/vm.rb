@@ -76,6 +76,12 @@ module RbScheme
 
           index_closure(cls, n).set_box!(acc)
           exp = x
+        when intern("assign-global")
+          check_length!(exp.cdr, 2, "assign-global")
+          key, x = exp.cdr.to_a
+
+          put_global(key, acc)
+          exp = x
         when intern("conti")
           check_length!(exp.cdr, 1, "conti")
           x = exp.cadr

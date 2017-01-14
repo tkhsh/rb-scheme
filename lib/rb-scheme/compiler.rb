@@ -50,7 +50,7 @@ module RbScheme
                          env,
                          lambda { |n| compile(x, env, sets, list(intern("assign-local"), n, nxt)) },
                          lambda { |n| compile(x, env, sets, list(intern("assign-free"), n, nxt)) },
-                         lambda { |k| raise NotImplementedError, "Can't assign global varialbe" })
+                         lambda { |k| compile(x, env, sets, list(intern("assign-global"), k, nxt)) })
         when intern("call/cc")
           check_length!(exp.cdr, 1, "call/cc")
           x = exp.cadr

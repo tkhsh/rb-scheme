@@ -82,6 +82,7 @@ class TestVM < Minitest::Test
   def test_vm_set
     vm_eval_exprs = <<-EXPRS
     (vm_eval ((lambda (x) (set! x 10)) 1))
+    (vm_eval (set! + 100))
     EXPRS
     StringIO.open(vm_eval_exprs) do |strio|
       @executer.set_source!(strio)
@@ -89,6 +90,11 @@ class TestVM < Minitest::Test
       # (vm_eval ((lambda (x) (set! x 10)) 1))
       result = eval_next(@env)
       assert_equal 10, result.value
+
+      # assign global variable
+      # (vm_eval (set! + 100))
+      result = eval_next(@env)
+      assert_equal 100, result.value
     end
   end
 
