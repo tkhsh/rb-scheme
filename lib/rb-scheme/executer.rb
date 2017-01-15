@@ -5,7 +5,7 @@ module RbScheme
 
     def_delegator :@parser, :read_expr
     def_delegator :@evaluator, :vm_eval
-    def_delegator :@printer, :print_lisp_object
+    def_delegator :@printer, :puts_lisp_object
 
     def self.run(source)
       new(source).exec
@@ -41,7 +41,7 @@ module RbScheme
         break if expr.nil?
         result = vm_eval(expr)
       end
-      print_lisp_object(result)
+      puts_lisp_object(result)
     end
 
     def exec_repl
@@ -50,7 +50,7 @@ module RbScheme
         expr = read_expr
         return if expr.nil?
         return if exit?(expr)
-        print_lisp_object(vm_eval(expr))
+        puts_lisp_object(vm_eval(expr))
       end
     end
   end # Executer
