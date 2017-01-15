@@ -35,13 +35,11 @@ module RbScheme
     end
 
     def exec_file
-      result = nil
       loop do
         expr = read_expr
         break if expr.nil?
-        result = vm_eval(expr)
+        vm_eval(expr)
       end
-      puts_lisp_object(result)
     end
 
     def exec_repl
