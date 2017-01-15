@@ -223,7 +223,7 @@ module RbScheme
         return return_global.call(var)
       end
 
-      raise "compile_lookup - #{var} isn't found in environment"
+      raise "#{var.name} isn't found in environment"
     end
   end # Compiler
 end # RbScheme
