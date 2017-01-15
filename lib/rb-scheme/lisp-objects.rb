@@ -81,41 +81,5 @@ module RbScheme
     include Singleton
   end
 
-  class LSyntax
-    attr_accessor :name, :syntax
-
-    def initialize(name, syntax)
-      @name = name
-      @syntax = syntax
-    end
-  end
-
-  class LSubroutine
-    attr_accessor :name, :subr
-
-    def initialize(name, subr)
-      @name = name
-      @subr = subr
-    end
-  end
-
-  class LLambda
-    attr_accessor :params, :body, :env
-
-    def initialize(params, body, env)
-      @params = params
-      @body = body
-      @env = env
-    end
-  end
-
-  class LMacro
-    attr_accessor :name, :form
-
-    def initialize(name, form)
-      @name = name
-      @form = form
-    end
-  end
 end # RbScheme
 
