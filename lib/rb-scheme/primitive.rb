@@ -5,7 +5,7 @@ module RbScheme
     include Symbol
     include Global
 
-    def_delegator :@printer, :print
+    def_delegators :@printer, :print_lisp_object, :puts_lisp_object
 
     def initialize
       @printer = Printer.new
@@ -50,6 +50,18 @@ module RbScheme
 
       put_global(intern("cdr"), lambda do |c|
         c.cdr
+      end)
+
+      put_global(intern("display"), lambda do |obj|
+        print_lisp_object(obj)
+      end)
+
+      put_global(intern("newline"), lambda do
+        print("\n")
+      end)
+
+      put_global(intern("print"), lambda do |obj|
+        puts_lisp_object(obj)
       end)
       # todo...
     end

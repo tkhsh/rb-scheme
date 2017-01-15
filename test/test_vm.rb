@@ -185,4 +185,31 @@ class TestVM < Minitest::Test
       assert_equal 100, result3.value
     end
   end
+
+  def test_vm_primitive_print
+    vm_eval_exprs = <<-EXPRS
+    (display 2)
+    (newline)
+    (print 10)
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      # (display 2)
+      assert_output(/^2$/) do
+        eval_next
+      end
+
+      # (newline)
+      assert_output(/^\n$/) do
+        eval_next
+      end
+
+      # (print 10)
+      assert_output(/^10\n$/) do
+        eval_next
+      end
+    end
+  end
+
 end
