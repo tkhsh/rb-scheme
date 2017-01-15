@@ -10,6 +10,7 @@ module RbScheme
     def initialize
       @compiler = Compiler.new
       @vm = VM.new
+      Primitive.new.initialize_vm_primitive!
     end
 
     def vm_eval(obj)

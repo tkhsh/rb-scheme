@@ -5,7 +5,6 @@ class TestVM < Minitest::Test
 
   def setup
     @executer = Executer.new(STDIN)
-    @executer.initialize_vm_primitive!
   end
 
   def eval_next

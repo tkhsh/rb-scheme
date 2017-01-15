@@ -4,7 +4,6 @@ module RbScheme
     include Helpers
 
     def_delegator :@parser, :read_expr
-    def_delegator :@primitive, :initialize_vm_primitive!
     def_delegator :@evaluator, :vm_eval
     def_delegator :@printer, :print_lisp_object
 
@@ -14,7 +13,6 @@ module RbScheme
 
     def initialize(source)
       set_source!(source)
-      @primitive = Primitive.new
       @evaluator = Evaluator.new
       @printer = Printer.new
     end
@@ -29,8 +27,6 @@ module RbScheme
     end
 
     def exec
-      initialize_vm_primitive!
-
       if File.file?(@source)
         exec_file
       else
