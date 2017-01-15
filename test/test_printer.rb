@@ -33,4 +33,15 @@ class TestParser < Minitest::Test
     end
   end
 
+  def test_puts_lisp_object
+    [
+      { input: "'(1 2 3)", expect: /^\(1 2 3\)\n$/ },
+    ].each do |pat|
+      obj = eval_string(pat[:input])
+      assert_output(pat[:expect]) do
+        @printer.puts_lisp_object(obj)
+      end
+    end
+  end
+
 end

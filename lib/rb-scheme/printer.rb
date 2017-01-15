@@ -1,5 +1,10 @@
 module RbScheme
   class Printer
+    def puts_lisp_object(obj)
+      print_lisp_object(obj)
+      print "\n"
+    end
+
     def print_lisp_object(obj)
       case obj
       when LInt
