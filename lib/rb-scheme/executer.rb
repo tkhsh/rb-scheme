@@ -6,7 +6,7 @@ module RbScheme
     def_delegator :@parser, :read_expr
     def_delegator :@primitive, :initialize_vm_primitive!
     def_delegator :@evaluator, :vm_eval
-    def_delegator :@printer, :print, :print_lisp_object
+    def_delegator :@printer, :print_lisp_object
 
     def self.run(source)
       new(source).exec
