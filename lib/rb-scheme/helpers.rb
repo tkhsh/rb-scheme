@@ -31,5 +31,12 @@ module RbScheme
         raise ArgumentError, "#{name}: wrong number of arguments(given #{c}, expected #{n})"
       end
     end
+
+    def check_min_length!(lst, min, name)
+      c = lst.count
+      unless c >= min
+        raise ArgumentError, "#{name}: wrong number of arguments(given #{c}, expected #{min}..)"
+      end
+    end
   end
 end # RbScheme
