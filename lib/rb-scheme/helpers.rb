@@ -28,7 +28,7 @@ module RbScheme
     def check_length!(lst, n, name)
       c = lst.count
       unless c == n
-        raise ArgumentError, "#{name}: wrong number of arguments(#{c} for #{n})"
+        raise ArgumentError, "#{name}: wrong number of arguments(given #{c}, expected #{n})"
       end
     end
   end
