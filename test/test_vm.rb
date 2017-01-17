@@ -39,6 +39,20 @@ class TestVM < Minitest::Test
     end
   end
 
+  def test_vm_assign_free_variable
+    vm_eval_exprs = <<-EXPRS
+    ((lambda (x) ((lambda (a b) (set! x 10)) 1 x)) 100)
+    EXPRS
+    StringIO.open(vm_eval_exprs) do |strio|
+      @executer.set_source!(strio)
+
+      # ((lambda (x) x) 1)
+      result = eval_next
+      assert_instance_of LInt, result
+      assert_equal 10, result.value
+    end
+  end
+
   def test_vm_literal
     vm_eval_exprs = <<-EXPRS
     '(1 2)

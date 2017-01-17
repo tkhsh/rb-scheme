@@ -40,6 +40,7 @@ module RbScheme
           x = exp.cadr
 
           acc = acc.unbox
+          exp = x
         when intern("constant")
           check_length!(exp.cdr, 2, "constant")
           obj, x = exp.cdr.to_a
