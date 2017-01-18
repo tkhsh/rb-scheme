@@ -8,6 +8,22 @@ class TestCompiler < Minitest::Test
     @compiler = Compiler.new
   end
 
+  def test_find_free_body
+    [
+      { literal: "((a b c) (x y))", vars: [intern("b"), intern("x")],
+        expect: [intern("a"), intern("c"), intern("y")] },
+      { literal: "((a b c) (a d))", vars: [intern("b"), intern("x")],
+        expect: [intern("a"), intern("c"), intern("d")] },
+    ].each do |pat|
+      StringIO.open(pat[:literal]) do |strio|
+        body = Parser.read_expr(strio)
+        bound_variables = Set.new(pat[:vars])
+        result = @compiler.find_free_body(body, bound_variables)
+        assert_equal result, Set.new(pat[:expect])
+      end
+    end
+  end
+
   def test_find_free
     StringIO.open("(a)") do |strio|
       exp = Parser.read_expr(strio)
@@ -54,6 +70,23 @@ class TestCompiler < Minitest::Test
       assert_equal 1, result.count
       assert_equal Set.new([intern("a")]), result
     end
+  end
+
+  def test_find_sets_body
+    [
+      { literal: "((a b c) (set! y 10))", vars: [intern("b"), intern("y")],
+        expect: [intern("y")] },
+      { literal: "((set! b 10) (set! b 10) (set! c 10))", vars: [intern("b"), intern("c")],
+        expect: [intern("b"), intern("c")] },
+    ].each do |pat|
+      StringIO.open(pat[:literal]) do |strio|
+        body = Parser.read_expr(strio)
+        bound_variables = Set.new(pat[:vars])
+        result = @compiler.find_sets_body(body, bound_variables)
+        assert_equal result, Set.new(pat[:expect])
+      end
+    end
+
   end
 
   def test_find_sets

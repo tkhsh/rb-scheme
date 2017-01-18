@@ -18,17 +18,17 @@ module RbScheme
 
           list(intern("constant"), obj, nxt)
         when intern("lambda")
-          check_length!(exp.cdr, 2, "lambda")
-          vars, body = exp.cdr.to_a
+          check_min_length!(exp.cdr, 2, "lambda")
+          vars, *body = exp.cdr.to_a
 
           local_bound = Set.new(vars)
           global_bound = Set.new(global_variables)
-          free = convert_to_list(find_free(body, local_bound.union(global_bound)))
-          sets_body = find_sets(body, Set.new(vars))
-          c = compile(body,
-                      cons(vars, free),
-                      sets_body.union(sets.intersection(free)),
-                      list(intern("return"), vars.count))
+          free = convert_to_list(find_free_body(body, local_bound.union(global_bound)))
+          sets_body = find_sets_body(body, Set.new(vars))
+          c = compile_lambda_body(body,
+                                  cons(vars, free),
+                                  sets_body.union(sets.intersection(free)),
+                                  list(intern("return"), vars.count))
           collect_free(free,
                        env,
                        list(intern("close"),
@@ -89,6 +89,20 @@ module RbScheme
       nxt.car == intern("return")
     end
 
+    def compile_lambda_body(body, env, sets, ret)
+      c = ret
+      body.reverse_each do |exp|
+        c = compile(exp, env, sets, c)
+      end
+      c
+    end
+
+    def find_sets_body(body, sets_vars)
+      body.reduce(Set.new) do |whole_sets, exp|
+        whole_sets.union(find_sets(exp, sets_vars))
+      end
+    end
+
     def find_sets(exp, vars)
       case exp
       when LSymbol
@@ -98,10 +112,10 @@ module RbScheme
         when intern("quote")
           Set.new
         when intern("lambda")
-          check_length!(exp.cdr, 2, "find_sets(lambda)")
-          new_vars, body = exp.cdr.to_a
+          check_min_length!(exp.cdr, 2, "find_sets(lambda)")
+          new_vars, *body = exp.cdr.to_a
 
-          find_sets(body, vars.subtract(new_vars))
+          find_sets_body(body, vars.subtract(new_vars))
         when intern("if")
           check_length!(exp.cdr, 3, "find_sets(if)")
           test, then_x, else_x = exp.cdr.to_a
@@ -145,6 +159,12 @@ module RbScheme
       res
     end
 
+    def find_free_body(body, bound_variables)
+      body.reduce(Set.new) do |whole_free, exp|
+        whole_free.union(find_free(exp, bound_variables))
+      end
+    end
+
     def find_free(exp, bound_variables)
       case exp
       when LSymbol
@@ -154,10 +174,10 @@ module RbScheme
         when intern("quote")
           Set.new
         when intern("lambda")
-          check_length!(exp.cdr, 2, "find_free(lambda)")
-          vars, body = exp.cdr.to_a
+          check_min_length!(exp.cdr, 2, "find_free")
+          vars, *body = exp.cdr.to_a
 
-          find_free(body, bound_variables.union(Set.new(vars)))
+          find_free_body(body, bound_variables.union(Set.new(vars)))
         when intern("if")
           check_length!(exp.cdr, 3, "find_free(if)")
           test_x, then_x, else_x = exp.cdr.to_a
