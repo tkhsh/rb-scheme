@@ -7,6 +7,11 @@ module RbScheme
     def initialize(value)
       @value = value
     end
+
+    def ==(another)
+      return false unless another.is_a? LInt
+      value == another.value
+    end
   end
 
   class LCell
