@@ -52,6 +52,23 @@ module RbScheme
         cdr = cdr.cdr
       end
     end
+
+    def ==(another)
+      l1 = self
+      l2 = another
+      loop do
+        if l1.is_a?(LCell) && l2.is_a?(LCell)
+          return false unless l1.car == l2.car
+          l1 = l1.cdr
+          l2 = l2.cdr
+        elsif !l1.is_a?(LCell) && !l2.is_a?(LCell)
+          return l1 == l2
+        else
+          return false
+        end
+      end
+    end
+
   end
 
   class LSymbol
