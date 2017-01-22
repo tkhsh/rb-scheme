@@ -35,6 +35,11 @@ module RbScheme
                             free.count,
                             make_boxes(sets_body, vars, c),
                             nxt))
+        when intern("begin")
+          check_min_length!(exp.cdr, 1, "begin")
+          *body = exp.cdr.to_a
+
+          compile_lambda_body(body, env, sets, nxt)
         when intern("if")
           check_length!(exp.cdr, 3, "if")
           test, then_exp, else_exp = exp.cdr.to_a

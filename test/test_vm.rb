@@ -114,6 +114,22 @@ class TestVM < Minitest::Test
     end
   end
 
+  def test_vm_begin
+    [
+      { literal: "(begin (display 4))", expect: /^4$/ },
+      { literal: "(begin (display 4) (display 5))", expect: /^45$/ },
+      { literal: "(begin (display 4) (display 5) (display 6))", expect: /^456$/ },
+    ].each do |pat|
+      StringIO.open(pat[:literal]) do |strio|
+        exp = Parser.read_expr(strio)
+        assert_output(pat[:expect]) do
+          @executer.vm_eval(exp)
+        end
+      end
+    end
+
+  end
+
   def test_vm_primitive_arithmetic
     [
       { literal: "(+ 2 3)", expect: LInt.new(5) },
