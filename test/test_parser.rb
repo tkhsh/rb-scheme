@@ -2,84 +2,83 @@ require 'helper'
 
 class TestParser < Minitest::Test
   include RbScheme
+  include RbScheme::Helpers
+  include RbScheme::Symbol
 
-  def test_read_expr
-    # integer
-    StringIO.open("1 -1 10") do |strio|
-      parser = Parser.new(strio)
-
-      expr1 = parser.read_expr
-      assert_equal 1, expr1.value
-      assert_instance_of LInt, expr1
-      expr2 = parser.read_expr
-      assert_equal -1, expr2.value
-      assert_instance_of LInt, expr2
-      expr3 = parser.read_expr
-      assert_equal 10, expr3.value
-      assert_instance_of LInt, expr3
-    end
-
-    # symbol
-    StringIO.open("a bc") do |strio|
-      parser = Parser.new(strio)
-
-      expr1 = parser.read_expr
-      assert_equal "a", expr1.name
-      assert_instance_of LSymbol, expr1
-      expr2 = parser.read_expr
-      assert_equal "bc", expr2.name
-      assert_instance_of LSymbol, expr2
-    end
-
-    # quote
-    StringIO.open("'a '(a b c)") do |strio|
-      parser = Parser.new(strio)
-
-      expr1 = parser.read_expr
-      assert_equal "quote", expr1.car.name
-      assert expr1.list?
-      expr2 = parser.read_expr
-      assert_equal "quote", expr2.car.name
-      assert expr2.list?
-    end
-
-    # list
-    StringIO.open("(1 2 3) (a) ()") do |strio|
-      parser = Parser.new(strio)
-
-      expr1 = parser.read_expr
-      assert_equal 1, expr1.car.value
-      assert_equal 2, expr1.cdr.car.value
-      assert_equal 3, expr1.cdr.cdr.car.value
-      assert_instance_of LNil, expr1.cdr.cdr.cdr
-      expr2 = parser.read_expr
-      assert_equal "a", expr2.car.name
-      assert_instance_of LNil, expr2.cdr
-      expr3 = parser.read_expr
-      assert_instance_of LNil, expr3
-    end
-
-    # dotted list
-    StringIO.open("(1 . 2) (f 1 . 3)") do |strio|
-      parser = Parser.new(strio)
-
-      expr1 = parser.read_expr
-      assert_equal 1, expr1.car.value
-      assert_equal 2, expr1.cdr.value
-      expr2 = parser.read_expr
-      assert_equal "f", expr2.car.name
-      assert_equal 1, expr2.cdr.car.value
-      assert_equal 3, expr2.cdr.cdr.value
-    end
-
-    # hash
-    StringIO.open("#t #f") do |strio|
-      parser = Parser.new(strio)
-
-      expr1 = parser.read_expr
-      assert_instance_of LTrue, expr1
-      expr2 = parser.read_expr
-      assert_instance_of LFalse, expr2
+  def test_read_expr_integer
+    [
+      { input: "1", expect: LInt.new(1) },
+      { input: "-1", expect: LInt.new(-1) },
+      { input: "10", expect: LInt.new(10) },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_equal pat[:expect], result
+      end
     end
   end
+
+  def test_read_expr_symbol
+    [
+      { input: "a", expect: intern("a") },
+      { input: "bc", expect: intern("bc") },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_equal pat[:expect], result
+      end
+    end
+  end
+
+  def test_read_expr_quote
+    [
+      { input: "'a", expect: list(intern("quote"), intern("a")) },
+      { input: "'(a b c)",
+        expect: list(intern("quote"),
+                     list(intern("a"), intern("b"), intern("c"))) },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_equal pat[:expect], result
+      end
+    end
+  end
+
+  def test_read_expr_list
+    [
+      { input: "(1 2 3)", expect: list(LInt.new(1), LInt.new(2), LInt.new(3)) },
+      { input: "(a)", expect: list(intern("a")) },
+      { input: "()", expect: list() },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_equal pat[:expect], result
+      end
+    end
+  end
+
+  def test_read_expr_dotted_list
+    [
+      { input: "(1 . 2)", expect: cons(LInt.new(1), LInt.new(2)) },
+      { input: "(f 1 . 3)", expect: cons(intern("f"), cons(LInt.new(1), LInt.new(3))) },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_equal pat[:expect], result
+      end
+    end
+  end
+
+  def test_read_expr_hash
+    [
+      { input: "#t", expect: LTrue },
+      { input: "#f", expect: LFalse },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_instance_of pat[:expect], result
+      end
+    end
+  end
+
 end
