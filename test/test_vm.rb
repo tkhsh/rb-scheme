@@ -9,6 +9,11 @@ class TestVM < Minitest::Test
     @executer = Executer.new(STDIN)
   end
 
+  def eval_with(io)
+    exp = Parser.read_expr(io)
+    @executer.vm_eval(exp)
+  end
+
   def test_vm_lambda
     [
       { literal: "((lambda (x) x) 1)", expect: LInt.new(1) },
@@ -20,8 +25,7 @@ class TestVM < Minitest::Test
         expect: LInt.new(12) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         expect = pat[:expect]
         assert_instance_of expect.class, result
@@ -36,8 +40,7 @@ class TestVM < Minitest::Test
         expect: LInt.new(10) }
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         expect = pat[:expect]
         assert_instance_of expect.class, result
@@ -51,8 +54,7 @@ class TestVM < Minitest::Test
       { literal: "'(1 2)", expect: list(LInt.new(1), LInt.new(2)) }
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
@@ -65,8 +67,7 @@ class TestVM < Minitest::Test
       { literal: "(if #t 1 2)", expect: LInt.new(1) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
@@ -81,8 +82,7 @@ class TestVM < Minitest::Test
       { literal: "(call/cc (lambda (s) (s 9)))", expect: LInt.new(9) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
@@ -95,8 +95,7 @@ class TestVM < Minitest::Test
       { literal: "(set! + 100)", expect: LInt.new(100) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
@@ -108,8 +107,7 @@ class TestVM < Minitest::Test
       { literal: "(define x 5)", expect: LInt.new(5) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
@@ -124,8 +122,7 @@ class TestVM < Minitest::Test
       { literal: "(/ 10 3)", expect: LInt.new(3) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
@@ -139,8 +136,7 @@ class TestVM < Minitest::Test
       { literal: "(> 1 1)", expect: LFalse },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_instance_of pat[:expect], result
       end
@@ -154,8 +150,7 @@ class TestVM < Minitest::Test
       { literal: "(cdr (cons 1 100))", expect: LInt.new(100) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
-        exp = Parser.read_expr(strio)
-        result = @executer.vm_eval(exp)
+        result = eval_with(strio)
 
         assert_equal pat[:expect], result
       end
