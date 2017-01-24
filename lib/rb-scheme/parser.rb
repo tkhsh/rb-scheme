@@ -66,10 +66,10 @@ module RbScheme
         loop do
           c = getc
           case c
-          when EOF, '\n'
+          when EOF, "\n"
             return
-          when '\r'
-            getc if '\n' == peek
+          when "\r"
+            getc if "\n" == peek
             return
           end
         end

@@ -81,4 +81,19 @@ class TestParser < Minitest::Test
     end
   end
 
+  def test_read_expr_comment_out
+    comment = <<-EXPR
+; (define x 5)
+1
+    EXPR
+    [
+      { input: comment, expect: LInt.new(1) },
+      { input: comment.gsub(/(\n)/) { "\r\n" }, expect: LInt.new(1) },
+    ].each do |pat|
+      StringIO.open(pat[:input]) do |strio|
+        result = Parser.read_expr(strio)
+        assert_equal pat[:expect], result
+      end
+    end
+  end
 end
