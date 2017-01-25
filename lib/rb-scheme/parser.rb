@@ -57,9 +57,9 @@ module RbScheme
         c
       end
 
-      def reverse_list(list)
-        return LNil.instance if LNil === list
-        list.reduce(LNil.instance) { |res, e| cons(e, res) }
+      def reverse_list(lst)
+        return lst if lst.null?
+        lst.reduce(list) { |res, e| cons(e, res) }
       end
 
       def skip_line
@@ -76,7 +76,7 @@ module RbScheme
       end
 
       def read_list
-        acc = LNil.instance
+        acc = list
         loop do
           obj = read_expr
           raise "read_list: Unclosed parenthesis" if obj.nil?
@@ -90,7 +90,7 @@ module RbScheme
             if close.nil? || !(LCloseParen === close)
               raise "read_list: Unclosed parenthesis"
             end
-            if LNil === acc
+            if acc.null?
               raise "read_list: dotted list must have car"
             end
 
@@ -103,7 +103,7 @@ module RbScheme
 
       def read_quote
         sym = intern("quote")
-        cons(sym, cons(read_expr, LNil.instance))
+        list(sym, read_expr)
       end
 
       def read_number(value)

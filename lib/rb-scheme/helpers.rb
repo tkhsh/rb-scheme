@@ -10,11 +10,11 @@ module RbScheme
     end
 
     def list(*args)
-      convert_to_list(args)
+      args.any? ? convert_to_list(args) : LCell.new
     end
 
     def convert_to_list(array)
-      result = LNil.instance
+      result = list
       array.reverse_each do |e|
         result = cons(e, result)
       end

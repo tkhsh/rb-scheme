@@ -11,8 +11,6 @@ module RbScheme
         print obj.value
       when LSymbol
         print obj.name
-      when LNil
-        print "()"
       when LTrue
         print "#t"
       when LFalse
@@ -22,14 +20,21 @@ module RbScheme
       when compound_procedure
         print "#<closure>"
       when LCell
+        if obj.null?
+          print("()")
+          return
+        end
+
         print "("
         loop do
           print_lisp_object(obj.car)
           case obj.cdr
-          when LNil
-            print(")")
-            return
           when LCell
+            if obj.cdr.null?
+              print(")")
+              return
+            end
+
             print(" ")
             obj = obj.cdr
           else

@@ -37,7 +37,7 @@ module RbScheme
       end)
 
       put_global(intern("null?"), lambda do |lst|
-        boolean(lst.is_a?(LNil))
+        boolean(lst.is_a?(LCell) && lst.null?)
       end)
 
       put_global(intern("cons"), lambda do |e1, e2|

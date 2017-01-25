@@ -214,7 +214,7 @@ module RbScheme
     end
 
     def collect_free(vars, env, nxt)
-      return nxt if LNil === vars
+      return nxt if vars.null?
 
       collect_free(vars.cdr,
                    env,
@@ -232,7 +232,7 @@ module RbScheme
     end
 
     def compile_lookup(var, env, return_local, return_free, return_global)
-      unless env.is_a?(LNil)
+      unless env.null?
         locals = env.car
         locals.each_with_index do |l, n|
           return return_local.call(n) if l == var

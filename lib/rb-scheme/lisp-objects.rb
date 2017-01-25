@@ -26,10 +26,14 @@ module RbScheme
 
     def each
       list = self
-      until LNil === list
+      until list.null?
         yield(list.car)
         list = list.cdr
       end
+    end
+
+    def null?
+      car == nil && cdr == nil
     end
 
     def cadr
@@ -47,8 +51,8 @@ module RbScheme
     def list?
       cdr = @cdr
       loop do
-        return true if LNil === cdr
         return false unless LCell === cdr
+        return true if cdr.null?
         cdr = cdr.cdr
       end
     end
