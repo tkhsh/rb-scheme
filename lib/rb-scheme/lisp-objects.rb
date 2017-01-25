@@ -91,14 +91,6 @@ module RbScheme
     include Singleton
   end
 
-  class LNil
-    include Singleton
-    include Enumerable
-
-    def each; end
-    def list?; true; end
-  end
-
   class LTrue
     include Singleton
   end
