@@ -12,55 +12,55 @@ module RbScheme
     end
 
     def initialize_vm_primitive!
-      put_global(intern("+"), lambda do |n1, n2|
+      put_primitive_proc("+", lambda do |n1, n2|
         LInt.new(n1.value + n2.value)
       end)
 
-      put_global(intern("-"), lambda do |n1, n2|
+      put_primitive_proc("-", lambda do |n1, n2|
         LInt.new(n1.value - n2.value)
       end)
 
-      put_global(intern("*"), lambda do |n1, n2|
+      put_primitive_proc("*", lambda do |n1, n2|
         LInt.new(n1.value * n2.value)
       end)
 
-      put_global(intern("/"), lambda do |n1, n2|
+      put_primitive_proc("/", lambda do |n1, n2|
         LInt.new(n1.value / n2.value)
       end)
 
-      put_global(intern("<"), lambda do |n1, n2|
+      put_primitive_proc("<", lambda do |n1, n2|
         boolean(n1.value < n2.value)
       end)
 
-      put_global(intern(">"), lambda do |n1, n2|
+      put_primitive_proc(">", lambda do |n1, n2|
         boolean(n1.value > n2.value)
       end)
 
-      put_global(intern("null?"), lambda do |lst|
+      put_primitive_proc("null?", lambda do |lst|
         boolean(lst.is_a?(LCell) && lst.null?)
       end)
 
-      put_global(intern("cons"), lambda do |e1, e2|
+      put_primitive_proc("cons", lambda do |e1, e2|
         cons(e1, e2)
       end)
 
-      put_global(intern("car"), lambda do |c|
+      put_primitive_proc("car", lambda do |c|
         c.car
       end)
 
-      put_global(intern("cdr"), lambda do |c|
+      put_primitive_proc("cdr", lambda do |c|
         c.cdr
       end)
 
-      put_global(intern("display"), lambda do |obj|
+      put_primitive_proc("display", lambda do |obj|
         print_lisp_object(obj)
       end)
 
-      put_global(intern("newline"), lambda do
+      put_primitive_proc("newline", lambda do
         print("\n")
       end)
 
-      put_global(intern("print"), lambda do |obj|
+      put_primitive_proc("print", lambda do |obj|
         puts_lisp_object(obj)
       end)
       # todo...

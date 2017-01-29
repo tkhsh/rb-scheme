@@ -55,7 +55,7 @@ module RbScheme
     end
 
     def primitive_procedure
-      Proc
+      Primitive::Procedure
     end
 
   end # Printer

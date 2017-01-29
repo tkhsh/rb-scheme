@@ -147,7 +147,7 @@ module RbScheme
         args.push(index(stack_p, i))
         i += 1
       end
-      fn.call(*args)
+      fn.call(args)
     end
 
     def return_primitive(stack_p, arg_len)
@@ -162,7 +162,7 @@ module RbScheme
     end
 
     def primitive_procedure?(procedure)
-      procedure.is_a?(Proc)
+      procedure.is_a?(Primitive::Procedure)
     end
 
     def compound_procedure?(procedure)
