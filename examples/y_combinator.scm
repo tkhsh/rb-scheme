@@ -1,0 +1,12 @@
+(print ((lambda (y)
+          ((y (lambda (fn)
+                (lambda (n)
+                  (if (< n 1)
+                    1
+                    (+ n (fn (- n 1)))))))
+           10))
+        (lambda (f)
+          ((lambda (g)
+             (f (lambda (arg) ((g g) arg))))
+           (lambda (g)
+             (f (lambda (arg) ((g g) arg))))))))
