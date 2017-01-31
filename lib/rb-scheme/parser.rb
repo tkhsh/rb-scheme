@@ -140,7 +140,7 @@ module RbScheme
 
       def symbol_rp
         allowed = '~!@$%^&*-_=+:/?<>'
-        Regexp.new("[A-Za-z#{Regexp.escape(allowed)}]")
+        Regexp.new("[A-Za-z0-9#{Regexp.escape(allowed)}]")
       end
 
   end # Parser

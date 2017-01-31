@@ -22,6 +22,7 @@ class TestParser < Minitest::Test
     [
       { input: "a", expect: intern("a") },
       { input: "bc", expect: intern("bc") },
+      { input: "lst1", expect: intern("lst1") },
     ].each do |pat|
       StringIO.open(pat[:input]) do |strio|
         result = Parser.read_expr(strio)
