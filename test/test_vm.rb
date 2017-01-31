@@ -132,10 +132,19 @@ class TestVM < Minitest::Test
 
   def test_vm_primitive_arithmetic
     [
+      { literal: "(+ 2 3 4)", expect: LInt.new(9) },
       { literal: "(+ 2 3)", expect: LInt.new(5) },
+      { literal: "(+ 2)", expect: LInt.new(2) },
+      { literal: "(+)", expect: LInt.new(0) },
+      { literal: "(- 3 2 1)", expect: LInt.new(0) },
       { literal: "(- 2 3)", expect: LInt.new(-1) },
-      { literal: "(* 5 10)", expect: LInt.new(50) },
+      { literal: "(- 3)", expect: LInt.new(-3) },
+      { literal: "(* 5 2 3)", expect: LInt.new(30) },
+      { literal: "(* 5)", expect: LInt.new(5) },
+      { literal: "(*)", expect: LInt.new(1) },
+      { literal: "(/ 20 5 2)", expect: LInt.new(2) },
       { literal: "(/ 10 3)", expect: LInt.new(3) },
+      { literal: "(/ 10)", expect: LInt.new(0) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
         result = eval_with(strio)

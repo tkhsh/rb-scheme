@@ -12,20 +12,44 @@ module RbScheme
     end
 
     def initialize_vm_primitive!
-      put_primitive_proc("+", lambda do |n1, n2|
-        LInt.new(n1.value + n2.value)
+      put_primitive_proc("+", lambda do |*nums|
+        sum = 0
+        nums.each do |n|
+          sum += n.value
+        end
+        LInt.new(sum)
       end)
 
-      put_primitive_proc("-", lambda do |n1, n2|
-        LInt.new(n1.value - n2.value)
+      put_primitive_proc("-", lambda do |first, *rest|
+        result = first.value
+        if rest.any?
+          rest.each do |n|
+            result -= n.value
+          end
+        else
+          result = -result
+        end
+        LInt.new(result)
       end)
 
-      put_primitive_proc("*", lambda do |n1, n2|
-        LInt.new(n1.value * n2.value)
+      put_primitive_proc("*", lambda do |*nums|
+        result = 1
+        nums.each do |n|
+          result *= n.value
+        end
+        LInt.new(result)
       end)
 
-      put_primitive_proc("/", lambda do |n1, n2|
-        LInt.new(n1.value / n2.value)
+      put_primitive_proc("/", lambda do |first, *rest|
+        result = first.value
+        if rest.any?
+          rest.each do |n|
+            result /= n.value
+          end
+        else
+          result = 1 / result
+        end
+        LInt.new(result)
       end)
 
       put_primitive_proc("<", lambda do |n1, n2|
