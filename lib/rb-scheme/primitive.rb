@@ -52,6 +52,10 @@ module RbScheme
         LInt.new(result)
       end)
 
+      put_primitive_proc("=", lambda do |n1, n2|
+        boolean(n1.value == n2.value)
+      end)
+
       put_primitive_proc("<", lambda do |n1, n2|
         boolean(n1.value < n2.value)
       end)

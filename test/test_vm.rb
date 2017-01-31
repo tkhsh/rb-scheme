@@ -156,6 +156,8 @@ class TestVM < Minitest::Test
 
   def test_vm_primitive_predicate
     [
+      { literal: "(= 1 1)", expect: LTrue },
+      { literal: "(= 1 3)", expect: LFalse },
       { literal: "(< 2 3)", expect: LTrue },
       { literal: "(> 2 3)", expect: LFalse },
       { literal: "(> 1 1)", expect: LFalse },
