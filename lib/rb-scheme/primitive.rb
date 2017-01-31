@@ -76,8 +76,16 @@ module RbScheme
         c.car
       end)
 
+      put_primitive_proc("cadr", lambda do |lst|
+        lst.cdr.car
+      end)
+
       put_primitive_proc("cdr", lambda do |c|
         c.cdr
+      end)
+
+      put_primitive_proc("cddr", lambda do |lst|
+        lst.cdr.cdr
       end)
 
       put_primitive_proc("list", lambda do |*lst|

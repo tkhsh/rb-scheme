@@ -173,8 +173,6 @@ class TestVM < Minitest::Test
   def test_vm_primitive_constructor
     [
       { literal: "(cons 2 3)", expect: cons(LInt.new(2), LInt.new(3)) },
-      { literal: "(car (cons 1 10))", expect: LInt.new(1) },
-      { literal: "(cdr (cons 1 100))", expect: LInt.new(100) },
       { literal: "(list)", expect: list },
       { literal: "(list 1)", expect: list(LInt.new(1)) },
       { literal: "(list 1 2)", expect: list(LInt.new(1), LInt.new(2)) },
@@ -182,6 +180,20 @@ class TestVM < Minitest::Test
       StringIO.open(pat[:literal]) do |strio|
         result = eval_with(strio)
 
+        assert_equal pat[:expect], result
+      end
+    end
+  end
+
+  def test_vm_primitive_list_accessor
+    [
+      { literal: "(car (cons 1 10))", expect: LInt.new(1) },
+      { literal: "(cdr (cons 1 100))", expect: LInt.new(100) },
+      { literal: "(cadr (list 1 2 3))", expect: LInt.new(2) },
+      { literal: "(cddr (list 1 2 3))", expect: list(LInt.new(3)) },
+    ].each do |pat|
+      StringIO.open(pat[:literal]) do |strio|
+        result = eval_with(strio)
         assert_equal pat[:expect], result
       end
     end
