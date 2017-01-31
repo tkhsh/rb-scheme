@@ -49,11 +49,11 @@ module RbScheme
           exp = x
         when intern("close")
           check_length!(exp.cdr, 3, "close")
-          n, body, x = exp.cdr.to_a
+          free_count, body, x = exp.cdr.to_a
 
-          acc = closure(body, n, stack_p)
+          acc = closure(body, free_count, stack_p)
           exp = x
-          stack_p = stack_p - n
+          stack_p = stack_p - free_count
         when intern("box")
           check_length!(exp.cdr, 2, "box")
           n, x = exp.cdr.to_a
@@ -115,11 +115,11 @@ module RbScheme
           stack_p = shift_args(n, m, stack_p)
         when intern("apply")
           check_length!(exp.cdr, 1, "apply")
-          arg_len = exp.cadr
+          param_count = exp.cadr
 
           if primitive_procedure?(acc)
-            acc = apply_primitive(acc, arg_len, stack_p)
-            exp, frame_p, cls, stack_p = return_primitive(stack_p, arg_len)
+            acc = apply_primitive(acc, param_count, stack_p)
+            exp, frame_p, cls, stack_p = return_primitive(stack_p, param_count)
           elsif compound_procedure?(acc)
             exp, frame_p, cls = apply_compound(acc, stack_p)
           else
@@ -140,18 +140,18 @@ module RbScheme
       end
     end
 
-    def apply_primitive(fn, arg_len, stack_p)
+    def apply_primitive(prim_proc, param_count, stack_p)
       i = 0
       args = []
-      arg_len.times do
+      param_count.times do
         args.push(index(stack_p, i))
         i += 1
       end
-      fn.call(args)
+      prim_proc.call(args)
     end
 
-    def return_primitive(stack_p, arg_len)
-      s = stack_p - arg_len
+    def return_primitive(stack_p, param_count)
+      s = stack_p - param_count
       # [exp, frame_p, cls, stack_p]
       [index(s, 0), index(s, 1), index(s, 2), s -3]
     end
@@ -178,12 +178,12 @@ module RbScheme
       s - m
     end
 
-    def closure(body, n, stack_p)
-      v = Array.new(n + 1)
+    def closure(body, free_count, stack_p)
+      v = Array.new(free_count + 1)
       v[0] = body
 
       i = 0
-      until i == n
+      until i == free_count
         v[i + 1] = index(stack_p, i)
         i += 1
       end
