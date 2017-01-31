@@ -175,6 +175,9 @@ class TestVM < Minitest::Test
       { literal: "(cons 2 3)", expect: cons(LInt.new(2), LInt.new(3)) },
       { literal: "(car (cons 1 10))", expect: LInt.new(1) },
       { literal: "(cdr (cons 1 100))", expect: LInt.new(100) },
+      { literal: "(list)", expect: list },
+      { literal: "(list 1)", expect: list(LInt.new(1)) },
+      { literal: "(list 1 2)", expect: list(LInt.new(1), LInt.new(2)) },
     ].each do |pat|
       StringIO.open(pat[:literal]) do |strio|
         result = eval_with(strio)

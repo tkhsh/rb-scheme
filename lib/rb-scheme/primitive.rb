@@ -80,6 +80,10 @@ module RbScheme
         c.cdr
       end)
 
+      put_primitive_proc("list", lambda do |*lst|
+        list(*lst)
+      end)
+
       put_primitive_proc("display", lambda do |obj|
         print_lisp_object(obj)
       end)
