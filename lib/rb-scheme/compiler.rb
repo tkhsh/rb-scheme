@@ -32,6 +32,7 @@ module RbScheme
           collect_free(free,
                        env,
                        list(intern("close"),
+                            vars.count,
                             free.count,
                             make_boxes(sets_body, vars, c),
                             nxt))

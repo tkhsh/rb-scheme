@@ -214,4 +214,22 @@ class TestVM < Minitest::Test
     end
   end
 
+  def test_vm_compound_proc_error
+    template = "closure: required %d arguments, got %d"
+    [
+      { literal: "((lambda () 3) 1 2)", expect: sprintf(template, 0, 2) },
+      { literal: "((lambda (x) x) 1 2)", expect: sprintf(template, 1, 2) },
+      { literal: "((lambda (x y) 1) 2 3 4)", expect: sprintf(template, 2, 3) },
+      { literal: "((lambda (x y) 1) 2)", expect: sprintf(template, 2, 1) },
+    ].each do |pat|
+      StringIO.open(pat[:literal]) do |strio|
+        exp = Parser.read_expr(strio)
+        err = assert_raises(ArgumentError) do
+          @executer.vm_eval(exp)
+        end
+        assert_equal pat[:expect], err.message
+      end
+    end
+  end
+
 end

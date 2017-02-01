@@ -48,10 +48,10 @@ module RbScheme
           acc = obj
           exp = x
         when intern("close")
-          check_length!(exp.cdr, 3, "close")
-          free_count, body, x = exp.cdr.to_a
+          check_length!(exp.cdr, 4, "close")
+          param_count, free_count, body, x = exp.cdr.to_a
 
-          acc = closure(body, free_count, stack_p)
+          acc = closure(body, param_count, free_count, stack_p)
           exp = x
           stack_p = stack_p - free_count
         when intern("box")
@@ -121,6 +121,7 @@ module RbScheme
             acc = apply_primitive(acc, param_count, stack_p)
             exp, frame_p, cls, stack_p = return_primitive(stack_p, param_count)
           elsif compound_procedure?(acc)
+            check_parameter!(closure_param_count(acc), param_count)
             exp, frame_p, cls = apply_compound(acc, stack_p)
           else
             raise "invalid application"
@@ -178,13 +179,15 @@ module RbScheme
       s - m
     end
 
-    def closure(body, free_count, stack_p)
-      v = Array.new(free_count + 1)
+    CLOSURE_OFFSET = 2
+    def closure(body, param_count, free_count, stack_p)
+      v = Array.new(free_count + CLOSURE_OFFSET)
       v[0] = body
+      v[1] = param_count
 
       i = 0
       until i == free_count
-        v[i + 1] = index(stack_p, i)
+        v[i + CLOSURE_OFFSET] = index(stack_p, i)
         i += 1
       end
       v
@@ -194,8 +197,19 @@ module RbScheme
       cls[0]
     end
 
+    def closure_param_count(cls)
+      cls[1]
+    end
+
     def index_closure(cls, n)
-      cls[n + 1]
+      cls[n + CLOSURE_OFFSET]
+    end
+
+    def check_parameter!(expect, got)
+      unless expect == got
+        raise ArgumentError,
+          "closure: required #{expect} arguments, got #{got}"
+      end
     end
 
     def continuation(stack_p)
@@ -204,7 +218,7 @@ module RbScheme
                   list(intern("nuate"),
                        save_stack(stack_p),
                        list(intern("return"), 0)))
-      closure(body, 0, stack_p)
+      closure(body, 1, 0, stack_p)
     end
 
   end # VM
