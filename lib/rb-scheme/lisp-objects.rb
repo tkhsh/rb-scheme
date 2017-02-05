@@ -40,6 +40,10 @@ module RbScheme
       @cdr.car
     end
 
+    def cddr
+      @cdr.cdr
+    end
+
     def caddr
       @cdr.cdr.car
     end
