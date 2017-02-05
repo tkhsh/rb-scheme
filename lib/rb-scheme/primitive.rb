@@ -73,6 +73,9 @@ module RbScheme
       end)
 
       put_primitive_proc("car", lambda do |c|
+        unless c.is_a?(LCell)
+          raise ArgumentError, "pair required, but got #{c}"
+        end
         c.car
       end)
 
@@ -81,6 +84,9 @@ module RbScheme
       end)
 
       put_primitive_proc("cdr", lambda do |c|
+        unless c.is_a?(LCell)
+          raise ArgumentError, "pair required, but got #{c}"
+        end
         c.cdr
       end)
 
