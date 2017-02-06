@@ -49,14 +49,61 @@ module RbScheme
       end
     end
 
-    def compound_procedure
-      # expression (lambda ...) is compiled into Array
-      Array
-    end
+    private
 
-    def primitive_procedure
-      Primitive::Procedure
-    end
+      def compound_procedure
+        # expression (lambda ...) is compiled into Array
+        Array
+      end
+
+      def primitive_procedure
+        Primitive::Procedure
+      end
+
+      # for debug
+      def print_debug(obj)
+        case obj
+        when LInt
+          print obj.value
+        when LSymbol
+          print obj.name
+        when LTrue
+          print "#t"
+        when LFalse
+          print "#f"
+        when primitive_procedure
+          print "#<subr>"
+        when compound_procedure
+          print "#<closure>"
+        when LCell
+          if obj.null?
+            print("()")
+            return
+          end
+
+          print "("
+          loop do
+            print_debug(obj.car)
+            case obj.cdr
+            when LCell
+              if obj.cdr.null?
+                print(")")
+                return
+              end
+
+              print(" ")
+              obj = obj.cdr
+            else
+              print(" . ")
+              print_debug(obj.cdr)
+              print(")")
+              return
+            end
+          end
+        else
+          print ("ruby(#{obj})")
+        end
+      end
 
   end # Printer
 end # RbScheme
