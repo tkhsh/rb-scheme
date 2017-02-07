@@ -112,5 +112,22 @@ class TestCompiler < Minitest::Test
       assert_equal "nxt", result.name
     end
   end
+
+  def test_parse_parameters
+    [
+      { input: list, expect: { vars: list, variadic?: false } },
+      { input: intern("a"), expect: { vars: list(intern("a")), variadic?: true } },
+      { input: list(intern("a")), expect: { vars: list(intern("a")), variadic?: false } },
+      { input: list(intern("a"), intern("b")),
+        expect: { vars: list(intern("a"), intern("b")), variadic?: false } },
+      { input: cons(intern("a"), intern("lst")),
+        expect: { vars: list(intern("a"), intern("lst")), variadic?: true } },
+    ].each do |pat|
+      result = @compiler.parse_parameters(pat[:input])
+      assert_equal pat[:expect][:vars], result[:vars]
+      assert_equal pat[:expect][:variadic?], result[:variadic?]
+    end
+  end
+
 end
 

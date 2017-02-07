@@ -48,10 +48,10 @@ module RbScheme
           acc = obj
           exp = x
         when intern("close")
-          check_length!(exp.cdr, 4, "close")
-          param_count, free_count, body, x = exp.cdr.to_a
+          check_length!(exp.cdr, 5, "close")
+          param_count, variadic, free_count, body, x = exp.cdr.to_a
 
-          acc = closure(body, param_count, free_count, stack_p)
+          acc = closure(body, param_count, variadic, free_count, stack_p)
           exp = x
           stack_p = stack_p - free_count
         when intern("box")
@@ -121,7 +121,10 @@ module RbScheme
             acc = apply_primitive(acc, arg_count, stack_p)
             exp, frame_p, cls, stack_p = return_primitive(stack_p, arg_count)
           elsif compound_procedure?(acc)
-            check_parameter!(closure_param_count(acc), arg_count)
+            check_parameter!(closure_param_count(acc), arg_count, variadic_closure?(acc))
+            if variadic_closure?(acc)
+              stack_p = collect_arguments(stack_p, closure_param_count(acc), arg_count)
+            end
             exp, frame_p, cls = apply_compound(acc, stack_p)
           else
             raise "invalid application"
@@ -139,6 +142,26 @@ module RbScheme
           raise "Unknown instruction - #{exp.car}"
         end
       end
+    end
+
+    def collect_arguments(stack_p, cls_param_count, arg_count)
+      lst = list
+      req = cls_param_count - 1
+      i = arg_count
+      (arg_count - req).times do
+        lst = cons(index(stack_p, i - 1), lst)
+        i -= 1
+      end
+      index_set!(stack_p, arg_count - 1, lst)
+
+      j = req
+      k = arg_count - 2
+      req.times do
+        index_set!(stack_p, k, index(stack_p, j - 1))
+        j -= 1
+        k -= 1
+      end
+      stack_p - arg_count + cls_param_count
     end
 
     def apply_primitive(prim_proc, arg_count, stack_p)
@@ -179,11 +202,12 @@ module RbScheme
       s - m
     end
 
-    CLOSURE_OFFSET = 2
-    def closure(body, param_count, free_count, stack_p)
+    CLOSURE_OFFSET = 3
+    def closure(body, param_count, variadic, free_count, stack_p)
       v = Array.new(free_count + CLOSURE_OFFSET)
       v[0] = body
       v[1] = param_count
+      v[2] = variadic
 
       i = 0
       until i == free_count
@@ -201,14 +225,26 @@ module RbScheme
       cls[1]
     end
 
+    def variadic_closure?(cls)
+      # 1: true, 0: false
+      cls[2] == 1
+    end
+
     def index_closure(cls, n)
       cls[n + CLOSURE_OFFSET]
     end
 
-    def check_parameter!(expect, got)
-      unless expect == got
-        raise ArgumentError,
-          "closure: required #{expect} arguments, got #{got}"
+    def check_parameter!(expect, got, variadic)
+      if variadic
+        unless expect <= got
+          raise ArgumentError,
+            "closure: required at least #{expect} arguments, got #{got}"
+        end
+      else
+        unless expect == got
+          raise ArgumentError,
+            "closure: required #{expect} arguments, got #{got}"
+        end
       end
     end
 
@@ -218,7 +254,7 @@ module RbScheme
                   list(intern("nuate"),
                        save_stack(stack_p),
                        list(intern("return"), 0)))
-      closure(body, 1, 0, stack_p)
+      closure(body, 1, 0, 0, stack_p)
     end
 
   end # VM

@@ -19,7 +19,9 @@ module RbScheme
           list(intern("constant"), obj, nxt)
         when intern("lambda")
           check_min_length!(exp.cdr, 2, "lambda")
-          vars, *body = exp.cdr.to_a
+          param_info = parse_parameters(exp.cadr)
+          vars = param_info[:vars]
+          *body = exp.cddr.to_a
 
           local_bound = Set.new(vars)
           global_bound = Set.new(global_variables)
@@ -33,6 +35,7 @@ module RbScheme
                        env,
                        list(intern("close"),
                             vars.count,
+                            param_info[:variadic?] ? 1 : 0,
                             free.count,
                             make_boxes(sets_body, vars, c),
                             nxt))
@@ -93,6 +96,29 @@ module RbScheme
 
     def tail?(nxt)
       nxt.car == intern("return")
+    end
+
+    def parse_parameters(param)
+      case param
+      when LSymbol
+        return { vars: list(param), variadic?: true }
+      when LCell
+        return { vars: list, variadic?: false } if param.null?
+        result = []
+        target = param
+        loop do
+          result.push(target.car)
+          target = target.cdr
+          if !target.is_a?(LCell)
+            result.push(target)
+            return { vars: convert_to_list(result), variadic?: true }
+          elsif target.null?
+            return { vars: convert_to_list(result), variadic?: false }
+          end
+        end
+      else
+        raise "error"
+      end
     end
 
     def compile_lambda_body(body, env, sets, ret)
