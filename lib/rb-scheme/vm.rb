@@ -115,13 +115,13 @@ module RbScheme
           stack_p = shift_args(n, m, stack_p)
         when intern("apply")
           check_length!(exp.cdr, 1, "apply")
-          param_count = exp.cadr
+          arg_count = exp.cadr
 
           if primitive_procedure?(acc)
-            acc = apply_primitive(acc, param_count, stack_p)
-            exp, frame_p, cls, stack_p = return_primitive(stack_p, param_count)
+            acc = apply_primitive(acc, arg_count, stack_p)
+            exp, frame_p, cls, stack_p = return_primitive(stack_p, arg_count)
           elsif compound_procedure?(acc)
-            check_parameter!(closure_param_count(acc), param_count)
+            check_parameter!(closure_param_count(acc), arg_count)
             exp, frame_p, cls = apply_compound(acc, stack_p)
           else
             raise "invalid application"
@@ -141,18 +141,18 @@ module RbScheme
       end
     end
 
-    def apply_primitive(prim_proc, param_count, stack_p)
+    def apply_primitive(prim_proc, arg_count, stack_p)
       i = 0
       args = []
-      param_count.times do
+      arg_count.times do
         args.push(index(stack_p, i))
         i += 1
       end
       prim_proc.call(args)
     end
 
-    def return_primitive(stack_p, param_count)
-      s = stack_p - param_count
+    def return_primitive(stack_p, arg_count)
+      s = stack_p - arg_count
       # [exp, frame_p, cls, stack_p]
       [index(s, 0), index(s, 1), index(s, 2), s -3]
     end
