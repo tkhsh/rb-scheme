@@ -1,6 +1,6 @@
 # RbScheme
 
-An implementation of Scheme subset written in ruby. Based on The Stack-Based model in [Three Implementation Models for Scheme](http://www.cs.indiana.edu/~dyb/papers/3imp.pdf) chapter 4(by R. Kent Dybvig). The model is implemented by a compiler and virtual machine.
+An implementation of Scheme subset written in Ruby. It's based on the Stack-Based model introduced in [Three Implementation Models for Scheme](http://www.cs.indiana.edu/~dyb/papers/3imp.pdf) by R. Kent Dybvig. The model is implemented by a compiler and virtual machine.
 
 # Features
 
@@ -20,17 +20,35 @@ An implementation of Scheme subset written in ruby. Based on The Stack-Based mod
 $ git clone https://github.com/tkhsh/rb-scheme.git
 ```
 
-# Run
+# Usage
 
-repl
+## Run
+
+### repl
 ```
 $ bin/rb-scheme
 ```
 
-with file
+You can use  [rlwrap](https://github.com/hanslub42/rlwrap) for readline
+```
+$ rlwrap bin/rb-scheme
+```
+
+### with file
 ```
 $ bin/rb-scheme examples/nqueen.scm
 ```
+
+## primitives
+
+- numeric(`+`, `-`, `*`, `/`)
+- predicate(`=`, `<`, `>`, `null?`)
+- lisp operations(`cons`, `car`, `cdr`, `list`)
+- print(`display`, `newline`, `print`)
+
+## examples
+
+see `examples` folder
 
 # Test
 
