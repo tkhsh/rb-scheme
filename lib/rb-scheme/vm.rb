@@ -145,14 +145,8 @@ module RbScheme
     end
 
     def collect_arguments(stack_p, cls_param_count, arg_count)
-      lst = list
       req = cls_param_count - 1
-      i = arg_count
-      (arg_count - req).times do
-        lst = cons(index(stack_p, i - 1), lst)
-        i -= 1
-      end
-      index_set!(stack_p, arg_count - 1, lst)
+      collect_arguments_as_list(stack_p, arg_count, arg_count - req)
 
       j = req
       k = arg_count - 2
@@ -162,6 +156,16 @@ module RbScheme
         k -= 1
       end
       stack_p - arg_count + cls_param_count
+    end
+
+    def collect_arguments_as_list(stack_p, arg_count, length)
+      lst = list
+      i = arg_count
+      length.times do
+        lst = cons(index(stack_p, i - 1), lst)
+        i -= 1
+      end
+      index_set!(stack_p, arg_count - 1, lst)
     end
 
     def apply_primitive(prim_proc, arg_count, stack_p)
