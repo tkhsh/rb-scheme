@@ -11,6 +11,7 @@ module RbScheme
       @compiler = Compiler.new
       @vm = VM.new
       Primitive.new.initialize_vm_primitive!
+      Extension.initialize_compound!(self)
     end
 
     def vm_eval(obj)
