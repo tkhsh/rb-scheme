@@ -147,14 +147,8 @@ module RbScheme
     def collect_arguments(stack_p, cls_param_count, arg_count)
       req = cls_param_count - 1
       collect_arguments_as_list(stack_p, arg_count, arg_count - req)
+      shift_required_variables(stack_p, req, arg_count)
 
-      j = req
-      k = arg_count - 2
-      req.times do
-        index_set!(stack_p, k, index(stack_p, j - 1))
-        j -= 1
-        k -= 1
-      end
       stack_p - arg_count + cls_param_count
     end
 
@@ -166,6 +160,16 @@ module RbScheme
         i -= 1
       end
       index_set!(stack_p, arg_count - 1, lst)
+    end
+
+    def shift_required_variables(stack_p, required_count, arg_count)
+      j = required_count
+      k = arg_count - 2
+      required_count.times do
+        index_set!(stack_p, k, index(stack_p, j - 1))
+        j -= 1
+        k -= 1
+      end
     end
 
     def apply_primitive(prim_proc, arg_count, stack_p)
