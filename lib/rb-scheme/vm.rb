@@ -146,10 +146,15 @@ module RbScheme
 
     def collect_arguments(stack_p, cls_param_count, arg_count)
       req = cls_param_count - 1
-      collect_arguments_as_list(stack_p, arg_count, arg_count - req)
-      shift_required_variables(stack_p, req, arg_count)
-
-      stack_p - arg_count + cls_param_count
+      list_length = arg_count - req
+      unless list_length == 0
+        collect_arguments_as_list(stack_p, arg_count, list_length)
+        shift_required_variables(stack_p, req, arg_count)
+        stack_p - arg_count + cls_param_count
+      else
+        add_empty_list_as_argument(stack_p, arg_count)
+        stack_p + 1
+      end
     end
 
     def collect_arguments_as_list(stack_p, arg_count, length)
@@ -170,6 +175,15 @@ module RbScheme
         j -= 1
         k -= 1
       end
+    end
+
+    def add_empty_list_as_argument(stack_p, arg_count)
+      last = arg_count - 1
+      0.upto(last) do |n|
+        v = index(stack_p, n)
+        index_set!(stack_p, n - 1, v)
+      end
+      index_set!(stack_p, last, list)
     end
 
     def apply_primitive(prim_proc, arg_count, stack_p)
@@ -244,7 +258,7 @@ module RbScheme
 
     def check_parameter!(expect, got, variadic)
       if variadic
-        unless expect <= got
+        unless (expect - 1) <= got
           raise ArgumentError,
             "closure: required at least #{expect} arguments, got #{got}"
         end

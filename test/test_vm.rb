@@ -36,6 +36,10 @@ class TestVM < Minitest::Test
 
   def test_vm_lambda_variadic
     [
+      { literal: "((lambda lst (cons 1 lst)))", expect: list(LInt.new(1)) },
+      { literal: "((lambda (x . lst) (cons x lst)) 1)", expect: list(LInt.new(1)) },
+      { literal: "((lambda (x y . lst) (cons x (cons y lst))) 1 2)",
+        expect: list(LInt.new(1), LInt.new(2)) },
       { literal: "((lambda lst (cons 1 lst)) 2 3)",
         expect: list(LInt.new(1), LInt.new(2), LInt.new(3)) },
       { literal: "((lambda (x . lst) (cons x lst)) 1 2 3))",
