@@ -270,7 +270,7 @@ module RbScheme
         end
       end
 
-      if Global.global_define?(var)
+      if Global.defined?(var)
         return return_global.call(var)
       end
 

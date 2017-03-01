@@ -2,7 +2,7 @@ module RbScheme
   module Global
     @@global_table = {}
 
-    def self.global_define?(key)
+    def self.defined?(key)
       raise unless key.is_a? LSymbol
       @@global_table.member?(key)
     end
