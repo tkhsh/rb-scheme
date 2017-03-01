@@ -24,7 +24,7 @@ module RbScheme
           *body = exp.cddr.to_a
 
           local_bound = Set.new(vars)
-          global_bound = Set.new(global_variables)
+          global_bound = Set.new(Global.global_variables)
           free = convert_to_list(find_free_body(body, local_bound.union(global_bound)))
           sets_body = find_sets_body(body, Set.new(vars))
           c = compile_lambda_body(body,
@@ -64,7 +64,7 @@ module RbScheme
           check_length!(exp.cdr, 2, "define")
           var, x = exp.cdr.to_a
 
-          put_global(var, nil)
+          Global.put_global(var, nil)
           compile(x, env, sets, list(intern("assign-global"), var, nxt))
         when intern("call/cc")
           check_length!(exp.cdr, 1, "call/cc")
@@ -271,7 +271,7 @@ module RbScheme
         end
       end
 
-      if global_define?(var)
+      if Global.global_define?(var)
         return return_global.call(var)
       end
 
