@@ -3,7 +3,6 @@ module RbScheme
     extend Forwardable
     include Helpers
     include Symbol
-    include Global
 
     def_delegators :@printer, :print_lisp_object, :puts_lisp_object
 

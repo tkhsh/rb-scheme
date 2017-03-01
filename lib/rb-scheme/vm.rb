@@ -3,7 +3,6 @@ module RbScheme
     extend Forwardable
     include Helpers
     include Symbol
-    include Global
 
     def_delegators :@stack, :push, :index, :index_set!, :save_stack, :restore_stack
 

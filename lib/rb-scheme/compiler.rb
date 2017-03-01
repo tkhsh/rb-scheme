@@ -2,7 +2,6 @@ module RbScheme
   class Compiler
     include Helpers
     include Symbol
-    include Global
 
     def compile(exp, env, sets, nxt)
       case exp
