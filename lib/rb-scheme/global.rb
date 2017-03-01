@@ -7,7 +7,7 @@ module RbScheme
       @@global_table.member?(key)
     end
 
-    def self.put_global(key, value)
+    def self.put(key, value)
       raise unless key.is_a? LSymbol
       @@global_table[key] = value
       value

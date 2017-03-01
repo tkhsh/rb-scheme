@@ -105,7 +105,7 @@ module RbScheme
 
     def put_primitive_proc(name, func)
       prim = Procedure.new(name: name, func: func)
-      Global.put_global(intern(name), prim)
+      Global.put(intern(name), prim)
     end
   end # Primitive
 end # RbScheme

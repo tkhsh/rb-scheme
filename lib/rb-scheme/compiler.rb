@@ -63,7 +63,7 @@ module RbScheme
           check_length!(exp.cdr, 2, "define")
           var, x = exp.cdr.to_a
 
-          Global.put_global(var, nil)
+          Global.put(var, nil)
           compile(x, env, sets, list(intern("assign-global"), var, nxt))
         when intern("call/cc")
           check_length!(exp.cdr, 1, "call/cc")

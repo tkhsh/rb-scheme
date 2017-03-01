@@ -80,7 +80,7 @@ module RbScheme
           check_length!(exp.cdr, 2, "assign-global")
           key, x = exp.cdr.to_a
 
-          Global.put_global(key, acc)
+          Global.put(key, acc)
           exp = x
         when intern("conti")
           check_length!(exp.cdr, 1, "conti")
