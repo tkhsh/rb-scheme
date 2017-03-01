@@ -32,7 +32,7 @@ module RbScheme
           check_length!(exp.cdr, 2, "refer-free")
           key, x = exp.cdr.to_a
 
-          acc = Global.get_global(key)
+          acc = Global.get(key)
           exp = x
         when intern("indirect")
           check_length!(exp.cdr, 1, "indirect")

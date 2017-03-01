@@ -13,7 +13,7 @@ module RbScheme
       value
     end
 
-    def self.get_global(key)
+    def self.get(key)
       raise unless key.is_a? LSymbol
       @@global_table[key]
     end
