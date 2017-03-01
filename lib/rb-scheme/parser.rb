@@ -142,6 +142,5 @@ module RbScheme
         allowed = '~!@$%^&*-_=+:/?<>'
         Regexp.new("[A-Za-z0-9#{Regexp.escape(allowed)}]")
       end
-
   end # Parser
 end # RbScheme

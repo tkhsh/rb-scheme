@@ -56,5 +56,4 @@ class TestHelpers < Minitest::Test
       assert_equal pat[:expect], e.message
     end
   end
-
 end

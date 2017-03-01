@@ -128,6 +128,4 @@ class TestCompiler < Minitest::Test
       assert_equal pat[:expect][:variadic?], result[:variadic?]
     end
   end
-
 end
-

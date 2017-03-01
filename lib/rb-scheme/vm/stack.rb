@@ -40,7 +40,6 @@ module RbScheme
         end
         s
       end
-
     end # Stack
   end # VM
 end # RbScheme

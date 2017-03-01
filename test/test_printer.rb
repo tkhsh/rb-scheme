@@ -43,5 +43,4 @@ class TestParser < Minitest::Test
       end
     end
   end
-
 end

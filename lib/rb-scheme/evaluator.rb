@@ -22,6 +22,5 @@ module RbScheme
               list,
               0)
     end
-
   end # Evaluator
 end # RbScheme

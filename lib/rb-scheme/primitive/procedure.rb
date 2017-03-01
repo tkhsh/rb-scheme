@@ -37,7 +37,6 @@ module RbScheme
             raise ArgumentError, message
           end
         end
-
     end # Procedure
   end # Primitive
 end # RbScheme

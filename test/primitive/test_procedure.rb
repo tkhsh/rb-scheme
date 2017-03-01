@@ -48,5 +48,4 @@ class TestProcedure < Minitest::Test
       assert_equal pat[:expect], err.message
     end
   end
-
 end

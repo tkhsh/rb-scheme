@@ -108,6 +108,5 @@ module RbScheme
       prim = Procedure.new(name: name, func: func)
       put_global(intern(name), prim)
     end
-
   end # Primitive
 end # RbScheme

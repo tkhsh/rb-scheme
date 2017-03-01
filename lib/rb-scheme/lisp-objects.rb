@@ -102,6 +102,4 @@ module RbScheme
   class LFalse
     include Singleton
   end
-
 end # RbScheme
-

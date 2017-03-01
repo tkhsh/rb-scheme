@@ -16,4 +16,3 @@ require 'rb-scheme/vm/box'
 require 'rb-scheme/vm/stack'
 require 'rb-scheme/vm'
 require 'rb-scheme/executer'
-

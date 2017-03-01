@@ -52,5 +52,4 @@ class TestLCell < Minitest::Test
       assert_equal pat[:expect], result
     end
   end
-
 end

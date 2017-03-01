@@ -104,6 +104,5 @@ module RbScheme
           print ("ruby(#{obj})")
         end
       end
-
   end # Printer
 end # RbScheme

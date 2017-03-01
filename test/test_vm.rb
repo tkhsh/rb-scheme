@@ -257,5 +257,4 @@ class TestVM < Minitest::Test
       end
     end
   end
-
 end

@@ -278,7 +278,5 @@ module RbScheme
                        list(intern("return"), 0)))
       closure(body, 1, 0, 0, stack_p)
     end
-
   end # VM
 end # RbScheme
-
