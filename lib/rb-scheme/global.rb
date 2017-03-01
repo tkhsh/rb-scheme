@@ -18,7 +18,7 @@ module RbScheme
       @@global_table[key]
     end
 
-    def self.global_variables
+    def self.variables
       @@global_table.keys
     end
   end # Global

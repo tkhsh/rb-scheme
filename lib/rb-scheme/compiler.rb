@@ -23,7 +23,7 @@ module RbScheme
           *body = exp.cddr.to_a
 
           local_bound = Set.new(vars)
-          global_bound = Set.new(Global.global_variables)
+          global_bound = Set.new(Global.variables)
           free = convert_to_list(find_free_body(body, local_bound.union(global_bound)))
           sets_body = find_sets_body(body, Set.new(vars))
           c = compile_lambda_body(body,
