@@ -19,7 +19,7 @@ An implementation of Scheme subset written in Ruby. It's based on the Stack-Base
 # Install
 
 ```
-$ git clone https://github.com/tkhsh/rb-scheme.git
+$ gem install rb-scheme
 ```
 
 # Usage
@@ -28,17 +28,17 @@ $ git clone https://github.com/tkhsh/rb-scheme.git
 
 ### repl
 ```
-$ bin/rb-scheme
+$ rb-scheme
 ```
 
 You can use  [rlwrap](https://github.com/hanslub42/rlwrap) for readline
 ```
-$ rlwrap bin/rb-scheme
+$ rlwrap rb-scheme
 ```
 
 ### with file
 ```
-$ bin/rb-scheme examples/nqueen.scm
+$ rb-scheme examples/nqueen.scm
 ```
 
 ## primitives
@@ -52,9 +52,8 @@ $ bin/rb-scheme examples/nqueen.scm
 
 see `examples` folder
 
-# Test
+# Development
 
-[bundler](http://bundler.io/) required
 ```
 $ bundle install
 $ rake test
